@@ -1,0 +1,25 @@
+1: Bird
+2: Dog
+3: Twelve
+4: Thirteen
+5: Fourteen
+6: Fifteen
+7: Sixteen
+8: Seventeen
+9: Eighteen
+10: Nineteen
+11: Twenty
+12: Twenty one
+13: Twenty two
+14: Twenty three
+15: Twenty four
+16: Twenty five
+17: Twenty six
+18: Twenty seven
+19: Twenty eight
+20: Twenty nine
+21: Thirty
+22: Thirty one
+23: Thirty two
+24: Thirty three
+
