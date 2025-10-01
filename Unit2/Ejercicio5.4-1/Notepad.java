@@ -4,19 +4,21 @@ import java.util.Scanner;
 public class Notepad {
     public static void main(String[] args) {
         Scanner scanner = new Scanner(System.in);
-        String fileName = "notepad.txt";
-        boolean append = false;
+        System.out.print("Enter the file name (example: notes.txt): ");
+        String fileName = scanner.nextLine();
 
+        boolean append = false;
         File file = new File(fileName);
+
         if (file.exists()) {
-            System.out.println("El archivo ya existe. Si desea sobrescribirlo pulse 'S' y si desea agregarlo al final pulse 'A'.");
+            System.out.println("The file already exists. Press 'S' to overwrite or 'A' to append.");
             String choice = scanner.nextLine();
             if (choice.equals("A") || choice.equals("a")) {
                 append = true;
             } else if (choice.equals("S") || choice.equals("s")) {
                 append = false;
             } else {
-                System.out.println("Opción no válida, se sobrescribirá por defecto.");
+                System.out.println("Invalid option, file will be overwritten by default.");
                 append = false;
             }
         }
@@ -34,21 +36,21 @@ public class Notepad {
                 reader.close();
             }
 
-            System.out.println("Escriba 'SALIR' para terminar.");
+            System.out.println("Type your text, write 'EXIT' to finish:");
 
             while (true) {
                 System.out.print(lineNumber + ": ");
                 String line = scanner.nextLine();
-                if (line.equals("SALIR") || line.equals("salir")) {
+                if (line.equals("EXIT") || line.equals("exit")) {
                     break;
                 }
                 writer.println(lineNumber + ": " + line);
                 lineNumber++;
             }
 
-            System.out.println("Archivo guardado correctamente");
+            System.out.println("File saved successfully.");
         } catch (IOException e) {
-            System.out.println("Ocurrió un error al escribir el archivo.");
+            System.out.println("An error happened while writing the file.");
         } finally {
             if (writer != null) {
                 writer.close();
