@@ -38,14 +38,16 @@ public class Notepad {
 
             System.out.println("Type your text, write 'EXIT' to finish:");
 
-            while (true) {
+            String line = "";
+
+            while (!(line.equals("EXIT") || line.equals("exit"))) {
                 System.out.print(lineNumber + ": ");
-                String line = scanner.nextLine();
-                if (line.equals("EXIT") || line.equals("exit")) {
-                    break;
+                line = scanner.nextLine();
+
+                if (!(line.equals("EXIT") || line.equals("exit"))) {
+                    writer.println(lineNumber + ": " + line);
+                    lineNumber++;
                 }
-                writer.println(lineNumber + ": " + line);
-                lineNumber++;
             }
 
             System.out.println("File saved successfully.");
