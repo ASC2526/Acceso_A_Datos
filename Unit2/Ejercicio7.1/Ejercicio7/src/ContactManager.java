@@ -75,7 +75,7 @@ public class ContactManager {
                     System.out.println("Not valid option");
                     break;
             }
-        } while (option != 4);
+        }
     }
 
     public static void saveContacts(List<Contact> contacts) {
