@@ -1,45 +1,41 @@
 package com.vtschool2526.util;
 
 import com.vtschool2526.model.Student;
-import org.xml.sax.Attributes;
-import org.xml.sax.helpers.DefaultHandler;
+import org.w3c.dom.*;
+
 import java.util.ArrayList;
 import java.util.List;
 
-public class StudentHandler extends DefaultHandler {
+public class StudentHandler {
 
-    private List<Student> students = new ArrayList<>();
-    private Student currentStudent = null;
-    private StringBuilder content = new StringBuilder();
+    public static List<Student> parseStudents(Document doc) {
 
-    public List<Student> getStudents() {
-        return students;
-    }
+        List<Student> list = new ArrayList<>();
 
-    @Override
-    public void startElement(String uri, String localName, String qName, Attributes attributes) {
-        if (qName.equalsIgnoreCase("student")) {
-            currentStudent = new Student();
-        }
-        content.setLength(0);
-    }
+        NodeList nl = doc.getElementsByTagName("student");
 
-    @Override
-    public void endElement(String uri, String localName, String qName) {
-        if (currentStudent != null) {
-            switch (qName.toLowerCase()) {
-                case "idcard" -> currentStudent.setIdcard(content.toString().trim());
-                case "firstname" -> currentStudent.setFirstname(content.toString().trim());
-                case "lastname" -> currentStudent.setLastname(content.toString().trim());
-                case "phone" -> currentStudent.setPhone(content.toString().trim());
-                case "email" -> currentStudent.setEmail(content.toString().trim());
-                case "student" -> students.add(currentStudent);
+        for (int i = 0; i < nl.getLength(); i++) {
+            Element e = (Element) nl.item(i);
+
+            Student s = new Student();
+
+            s.setIdcard(e.getElementsByTagName("idcard").item(0).getTextContent());
+            s.setFirstname(e.getElementsByTagName("firstname").item(0).getTextContent());
+            s.setLastname(e.getElementsByTagName("lastname").item(0).getTextContent());
+
+            Node emailNode = e.getElementsByTagName("email").item(0);
+            if (emailNode != null) {
+                s.setEmail(emailNode.getTextContent());
             }
-        }
-    }
 
-    @Override
-    public void characters(char[] ch, int start, int length) {
-        content.append(ch, start, length);
+            Node phoneNode = e.getElementsByTagName("phone").item(0);
+            if (phoneNode != null) {
+                s.setPhone(phoneNode.getTextContent());
+            }
+
+            list.add(s);
+        }
+
+        return list;
     }
 }
