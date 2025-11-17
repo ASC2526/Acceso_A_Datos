@@ -1,41 +1,57 @@
 package com.vtschool2526.util;
 
 import com.vtschool2526.model.Student;
-import org.w3c.dom.*;
+import org.xml.sax.Attributes;
+import org.xml.sax.helpers.DefaultHandler;
 
 import java.util.ArrayList;
 import java.util.List;
 
-public class StudentHandler {
+public class StudentHandler extends DefaultHandler {
 
-    public static List<Student> parseStudents(Document doc) {
+    private final List<Student> students = new ArrayList<>();
+    private Student current = null;
+    private String tagContent = null;
 
-        List<Student> list = new ArrayList<>();
+    public List<Student> getStudents() {
+        return students;
+    }
 
-        NodeList nl = doc.getElementsByTagName("student");
-
-        for (int i = 0; i < nl.getLength(); i++) {
-            Element e = (Element) nl.item(i);
-
-            Student s = new Student();
-
-            s.setIdcard(e.getElementsByTagName("idcard").item(0).getTextContent());
-            s.setFirstname(e.getElementsByTagName("firstname").item(0).getTextContent());
-            s.setLastname(e.getElementsByTagName("lastname").item(0).getTextContent());
-
-            Node emailNode = e.getElementsByTagName("email").item(0);
-            if (emailNode != null) {
-                s.setEmail(emailNode.getTextContent());
-            }
-
-            Node phoneNode = e.getElementsByTagName("phone").item(0);
-            if (phoneNode != null) {
-                s.setPhone(phoneNode.getTextContent());
-            }
-
-            list.add(s);
+    @Override
+    public void startElement(String uri, String localName, String qName, Attributes attributes) {
+        if (qName.equalsIgnoreCase("student")) {
+            current = new Student();
         }
+    }
 
-        return list;
+    @Override
+    public void characters(char[] ch, int start, int length) {
+        tagContent = new String(ch, start, length);
+    }
+
+    @Override
+    public void endElement(String uri, String localName, String qName) {
+
+        if (current == null) return;
+
+        if (qName.equalsIgnoreCase("idcard")) {
+            current.setIdcard(tagContent.trim());
+        }
+        else if (qName.equalsIgnoreCase("firstname")) {
+            current.setFirstname(tagContent.trim());
+        }
+        else if (qName.equalsIgnoreCase("lastname")) {
+            current.setLastname(tagContent.trim());
+        }
+        else if (qName.equalsIgnoreCase("email")) {
+            current.setEmail(tagContent.trim());
+        }
+        else if (qName.equalsIgnoreCase("phone")) {
+            current.setPhone(tagContent.trim());
+        }
+        else if (qName.equalsIgnoreCase("student")) {
+            students.add(current);
+            current = null;
+        }
     }
 }

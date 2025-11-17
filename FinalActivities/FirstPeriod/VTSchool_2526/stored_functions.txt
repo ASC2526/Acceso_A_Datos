@@ -1,25 +1,6 @@
 SET search_path TO _da_vtschool_2526;
 
-CREATE OR REPLACE FUNCTION subjects_passed_asc_2526(
-    sid VARCHAR,
-    cid INTEGER
-)
-RETURNS TABLE(subject_id INTEGER)
-LANGUAGE plpgsql
-AS $$
-BEGIN
-    RETURN QUERY
-    SELECT s.subject_id
-    FROM scores s
-    JOIN enrollments e ON e.code = s.enrollment_id
-    JOIN subject_courses sc ON sc.subject_id = s.subject_id
-    WHERE e.student = sid
-    AND sc.course_id = cid
-    AND s.score >= 5;
-END;
-$$;
-
-CREATE OR REPLACE FUNCTION subjects_not_passed_asc_2526(
+CREATE OR REPLACE FUNCTION _da_vtschool_2526.subjects_not_passed_asc_2526(
     sid VARCHAR,
     cid INTEGER
 )
@@ -29,16 +10,35 @@ AS $$
 BEGIN
     RETURN QUERY
     SELECT sc.subject_id
-    FROM subject_courses sc
+    FROM _da_vtschool_2526.subject_courses sc
     WHERE sc.course_id = cid
-    AND sc.subject_id NOT IN (
-        SELECT s.subject_id
-        FROM scores s
-        JOIN enrollments e ON e.code = s.enrollment_id
-        JOIN subject_courses sc2 ON sc2.subject_id = s.subject_id
+    	AND sc.subject_id NOT IN (
+     	SELECT s.subject_id
+        FROM _da_vtschool_2526.scores s
+        JOIN _da_vtschool_2526.enrollments e
+        ON e.code = s.enrollment_id
         WHERE e.student = sid
-        AND sc2.course_id = cid
-        AND s.score >= 5
+         AND s.score >= 5
+         AND e.course = cid
       );
+END;
+$$;
+
+CREATE OR REPLACE FUNCTION _da_vtschool_2526.subjects_passed_asc_2526(
+    sid VARCHAR,
+    cid INTEGER
+)
+RETURNS TABLE(subject_id INTEGER)
+LANGUAGE plpgsql
+AS $$
+BEGIN
+    RETURN QUERY
+    SELECT s.subject_id
+    FROM _da_vtschool_2526.scores s
+    JOIN _da_vtschool_2526.enrollments e 
+    ON e.code = s.enrollment_id
+    WHERE e.student = sid
+     AND e.course = cid
+     AND s.score >= 5;
 END;
 $$;

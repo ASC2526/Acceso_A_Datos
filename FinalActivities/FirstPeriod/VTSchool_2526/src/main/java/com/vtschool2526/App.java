@@ -6,15 +6,18 @@ import com.vtschool2526.service.EnrollmentService;
 public class App {
 
     private static final String HELP_TEXT =
-            "VT School - command line\n" +
-                    "Usage:\n" +
-                    "  java -jar VTSchool2526.jar [option] [args]\n\n" +
-                    "Options:\n" +
-                    "  -h, --help            Show help text\n" +
-                    "  -a, --add <file>      Import students from XML file\n" +
-                    "  -e, --enroll ...      (pending...)\n" +
-                    "  -q, --qualify ...     (pending...)\n" +
-                    "  -p, --print ...       (pending...)\n";
+            """
+                    VT School - command line
+                    Usage:
+                      java -jar VTSchool2526.jar [option] [args]
+                    
+                    Options:
+                      -h, --help            Show help text
+                      -a, --add <file>      Import students from XML file
+                      -e, --enroll ...      (pending...)
+                      -q, --qualify ...     (pending...)
+                      -p, --print ...       (pending...)
+                    """;
 
     public static void main(String[] args) {
 
@@ -45,6 +48,13 @@ public class App {
                     System.out.println("Usage: --enroll <idcard> <courseId> <year>");
                     return;
                 }
+                try {
+                    int course = Integer.parseInt(args[2]);
+                    int year = Integer.parseInt(args[3]);
+                    EnrollmentService.enroll(args[1], course, year);
+                } catch (NumberFormatException e) {
+                    System.out.println("Error --> courseId and year must be numbers");
+                }
                 EnrollmentService.enroll(
                         args[1],
                         Integer.parseInt(args[2]),
@@ -56,5 +66,6 @@ public class App {
                 System.out.println("Unknown option.\n");
                 System.out.println(HELP_TEXT);
         }
+
     }
 }
