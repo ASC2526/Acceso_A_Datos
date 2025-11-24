@@ -16,6 +16,7 @@ public class App {
               -e, --enroll {studentId} {courseId}   enroll a student in a course
               -p, --imprimir {studentId} {courseId}  [-f / --file]   show the scores of a student in a course. Press -f, --file to write in a file text.
               -q, --qualify {studentId} {courseId}   introduce the scores obtained by the student in the course.
+              -d --diploma {studentId} {courseId}   shows the year when the student finish the course.
             """;
 
     public static void main(String[] args) {
@@ -69,6 +70,14 @@ public class App {
                     return;
                 }
                 QualificationService.qualify(args[1], Integer.parseInt(args[2]));
+            }
+
+            case "-d", "--diploma" -> {
+                if (args.length < 3) {
+                    System.out.println("ERROR --> Usage: --diploma <idcard> <courseId>");
+                    return;
+                }
+
             }
 
 

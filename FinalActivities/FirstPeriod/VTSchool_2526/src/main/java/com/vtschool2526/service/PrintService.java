@@ -7,9 +7,6 @@ import com.vtschool2526.model.Student;
 import com.vtschool2526.util.HibernateSession;
 import org.hibernate.Session;
 import org.hibernate.query.Query;
-
-import java.io.BufferedWriter;
-import java.io.FileWriter;
 import java.util.List;
 import java.util.Scanner;
 
@@ -46,13 +43,6 @@ public class PrintService {
             if (enrollments.isEmpty()) {
                 System.out.println("ERROR → Student " + idcard + " is not enrolled in course " + courseId);
                 return;
-            }
-
-            System.out.println("Press -f, --file to write in a file text. If not, press 'p'");
-            Scanner scanner = new Scanner(System.in);
-            String decision = scanner.nextLine().trim();
-            if (decision.equals("-f") || decision.equals("--file")) {
-
             }
 
             System.out.println("Year  Subjects                      Score");
