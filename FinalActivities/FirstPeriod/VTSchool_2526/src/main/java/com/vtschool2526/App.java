@@ -1,23 +1,22 @@
 package com.vtschool2526;
 
-import com.vtschool2526.service.StudentService;
 import com.vtschool2526.service.EnrollmentService;
+import com.vtschool2526.service.StudentService;
+import com.vtschool2526.service.QualificationService;
+import com.vtschool2526.service.PrintService;
 
 public class App {
 
     private static final String HELP_TEXT =
             """
-                    VT School - command line
-                    Usage:
-                      java -jar VTSchool2526.jar [option] [args]
-                    
-                    Options:
-                      -h, --help            Show help text
-                      -a, --add <file>      Import students from XML file
-                      -e, --enroll ...      (pending...)
-                      -q, --qualify ...     (pending...)
-                      -p, --print ...       (pending...)
-                    """;
+            Usage: vtinstitute [options]
+            Options:
+              -h, --help                        show this help
+              -a, --add {filename.xml}          add the students in the XML file to the database.
+              -e, --enroll {studentId} {courseId}   enroll a student in a course
+              -p, --print {studentId} {courseId}     show the scores of a student in a course
+              -q, --qualify {studentId} {courseId}   introduce the scores obtained by the student in the course.
+            """;
 
     public static void main(String[] args) {
 
@@ -26,46 +25,45 @@ public class App {
             return;
         }
 
-        switch (args[0]) {
+        String option = args[0];
 
-            case "--help":
-            case "-h":
-                System.out.println(HELP_TEXT);
-                break;
+        switch (option) {
 
-            case "--add":
-            case "-a":
+            case "-h", "--help" -> System.out.println(HELP_TEXT);
+
+            case "-a", "--add" -> {
                 if (args.length < 2) {
-                    System.out.println("Usage: --add <xmlfile>");
+                    System.out.println("ERROR --> Missing XML file.");
                     return;
                 }
                 StudentService.importStudents(args[1]);
-                break;
+            }
 
-            case "--enroll":
-            case "-e":
-                if (args.length < 4) {
-                    System.out.println("Usage: --enroll <idcard> <courseId> <year>");
+            case "-e", "--enroll" -> {
+                if (args.length < 3) {
+                    System.out.println("ERROR --> Usage: --enroll <idcard> <courseId>");
                     return;
                 }
-                try {
-                    int course = Integer.parseInt(args[2]);
-                    int year = Integer.parseInt(args[3]);
-                    EnrollmentService.enroll(args[1], course, year);
-                } catch (NumberFormatException e) {
-                    System.out.println("Error --> courseId and year must be numbers");
+                EnrollmentService.enroll(args[1], Integer.parseInt(args[2]));
+            }
+
+            case "-p", "--print" -> {
+                if (args.length < 3) {
+                    System.out.println("ERROR --> Usage: --print <idcard> <courseId>");
+                    return;
                 }
-                EnrollmentService.enroll(
-                        args[1],
-                        Integer.parseInt(args[2]),
-                        Integer.parseInt(args[3])
-                );
-                break;
+                PrintService.print(args[1], Integer.parseInt(args[2]));
+            }
 
-            default:
-                System.out.println("Unknown option.\n");
-                System.out.println(HELP_TEXT);
+            case "-q", "--qualify" -> {
+                if (args.length < 3) {
+                    System.out.println("ERROR --> Usage: --qualify <idcard> <courseId>");
+                    return;
+                }
+                QualificationService.qualify(args[1], Integer.parseInt(args[2]));
+            }
+
+            default -> System.out.println("Unknown option. Use --help");
         }
-
     }
 }
