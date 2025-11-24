@@ -1,9 +1,9 @@
 package com.vtschool2526;
 
-import com.vtschool2526.service.EnrollmentService;
-import com.vtschool2526.service.StudentService;
-import com.vtschool2526.service.QualificationService;
-import com.vtschool2526.service.PrintService;
+import com.vtschool2526.service.*;
+
+import java.io.File;
+import java.util.Scanner;
 
 public class App {
 
@@ -14,7 +14,7 @@ public class App {
               -h, --help                        show this help
               -a, --add {filename.xml}          add the students in the XML file to the database.
               -e, --enroll {studentId} {courseId}   enroll a student in a course
-              -p, --print {studentId} {courseId}     show the scores of a student in a course
+              -p, --imprimir {studentId} {courseId}  [-f / --file]   show the scores of a student in a course. Press -f, --file to write in a file text.
               -q, --qualify {studentId} {courseId}   introduce the scores obtained by the student in the course.
             """;
 
@@ -55,6 +55,14 @@ public class App {
                 PrintService.print(args[1], Integer.parseInt(args[2]));
             }
 
+            case "-p-f", "--imprimir--file", "-p-file", "--imprimir-f" -> {
+                if (args.length < 3) {
+                    System.out.println("ERROR --> Usage: --print <idcard> <courseId>");
+                    return;
+                }
+                PrintServiceFile.print(args[1], Integer.parseInt(args[2]));
+            }
+
             case "-q", "--qualify" -> {
                 if (args.length < 3) {
                     System.out.println("ERROR --> Usage: --qualify <idcard> <courseId>");
@@ -62,6 +70,7 @@ public class App {
                 }
                 QualificationService.qualify(args[1], Integer.parseInt(args[2]));
             }
+
 
             default -> System.out.println("Unknown option. Use --help");
         }
