@@ -17,6 +17,7 @@ public class EnrollmentService {
     public static void enroll(String idcard, int courseId) {
 
         try (Session session = HibernateSession.openSession()) {
+
             Transaction tx = session.beginTransaction();
 
             Student student = session.find(Student.class, idcard);
@@ -31,69 +32,64 @@ public class EnrollmentService {
                 return;
             }
 
-            // here I find last enrollments in this course
+            // last enrollment of student in that course
             Query<Enrollment> qLast = session.createQuery(
-                    "from Enrollment e where e.student.idcard = :sid and e.course.id = :cid order by e.year desc",
-                    Enrollment.class
-            );
+                    "from Enrollment e " +
+                            "where e.student.idcard = :sid and e.course.id = :cid " +
+                            "order by e.year desc",
+                    Enrollment.class);
+
             qLast.setParameter("sid", idcard);
             qLast.setParameter("cid", courseId);
 
             List<Enrollment> listLast = qLast.list();
-            Enrollment lastEnrollment = (listLast.isEmpty() ? null : listLast.get(0));
+            Enrollment lastEnrollment = listLast.isEmpty() ? null : listLast.get(0);
 
-            int newYear = (lastEnrollment == null ? 2023 : lastEnrollment.getYear() + 1);
-
-            // check if is already enrolled in that course that year
-            Query<Long> qSameCourseSameYear = session.createQuery(
-                    "select count(e) from Enrollment e " +
-                            "where e.student.idcard = :sid and e.course.id = :cid and e.year = :yr",
-                    Long.class
-            );
-            qSameCourseSameYear.setParameter("sid", idcard);
-            qSameCourseSameYear.setParameter("cid", courseId);
-            qSameCourseSameYear.setParameter("yr", newYear);
-
-            if (qSameCourseSameYear.uniqueResult() > 0) {
-                System.out.println("Previously enrolled");
-                return;
+            int newYear;
+            if (lastEnrollment == null) {
+                newYear = 2023;
+            } else {
+                newYear = lastEnrollment.getYear() + 1;
             }
 
-            // check if is already enrolled in other course that year
-            Query<Long> qOtherCourseSameYear = session.createQuery(
+            // check if student already enrolled that year
+            Query<Long> qConflict = session.createQuery(
                     "select count(e) from Enrollment e " +
-                            "where e.student.idcard = :sid and e.course.id <> :cid and e.year = :yr",
-                    Long.class
-            );
-            qOtherCourseSameYear.setParameter("sid", idcard);
-            qOtherCourseSameYear.setParameter("cid", courseId);
-            qOtherCourseSameYear.setParameter("yr", newYear);
+                            "where e.student.idcard = :sid and e.year = :yr",
+                    Long.class);
 
-            Long conflict = qOtherCourseSameYear.uniqueResult();
-            if (conflict != null && conflict > 0) {
+            qConflict.setParameter("sid", idcard);
+            qConflict.setParameter("yr", newYear);
+
+            List<Long> conflictList = qConflict.list();
+            long conflict = conflictList.isEmpty() ? 0 : conflictList.get(0);
+
+            if (conflict > 0) {
                 System.out.println("ERROR --> Student already enrolled in another course in year " + newYear);
                 return;
             }
-
             List<Integer> subjectsToEnroll;
 
             if (lastEnrollment == null) {
 
-                // if is first year
+                // if is first year, get subjects
                 Query<Integer> q1 = session.createQuery(
                         "select sc.subject.id from SubjectCourse sc " +
-                                "where sc.course.id = :cid and sc.subject.year = 1", Integer.class
-                );
+                                "where sc.course.id = :cid and sc.subject.year = 1",
+                        Integer.class);
+
                 q1.setParameter("cid", courseId);
+
                 subjectsToEnroll = q1.list();
 
                 if (subjectsToEnroll.isEmpty()) {
-                    System.out.println("ERROR --> No first-year subjects found.");
+                    System.out.println("ERROR --> No first year subjects found.");
                     return;
                 }
 
-            } else { // if is not first year, get pending subjects
-                String sql = "SELECT * FROM _da_vtschool_2526.subjects_pending_asc_2526(:sid, :cid)";
+            } else { // next years
+                String sql =
+                        "SELECT * FROM _da_vtschool_2526.subjects_pending_asc_2526(:sid, :cid)";
 
                 @SuppressWarnings("unchecked")
                 List<Integer> pending = session.createNativeQuery(sql)
@@ -102,7 +98,7 @@ public class EnrollmentService {
                         .list();
 
                 if (pending.isEmpty()) {
-                    System.out.println("Course already completed");
+                    System.out.println("ERROR --> Course already completed.");
                     return;
                 }
 
@@ -117,8 +113,9 @@ public class EnrollmentService {
             session.persist(enrollment);
             session.flush();
 
-            for (Integer sid2 : subjectsToEnroll) {
-                Subject sub = session.find(Subject.class, sid2);
+            for (Integer subId : subjectsToEnroll) {
+
+                Subject sub = session.find(Subject.class, subId);
 
                 Score s = new Score();
                 s.setEnrollment(enrollment);

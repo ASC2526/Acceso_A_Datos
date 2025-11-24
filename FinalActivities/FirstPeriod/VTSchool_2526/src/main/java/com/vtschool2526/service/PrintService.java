@@ -13,7 +13,7 @@ public class PrintService {
     public static void print(String idcard, int courseId) {
 
         try (Session session = HibernateSession.openSession()) {
-            // get enrollments of this student in this course
+            // get all enrollments of this student in this course
             Query<Enrollment> q = session.createQuery(
                     "from Enrollment e " +
                             "where e.student.idcard = :sid and e.course.id = :cid " +
@@ -35,7 +35,6 @@ public class PrintService {
 
             // print scores and subjects
             for (Enrollment enrolls : enrollments) {
-
                 Query<Score> q2 = session.createQuery(
                         "from Score s " +
                                 "where s.enrollment.id = :eid " +
@@ -47,12 +46,7 @@ public class PrintService {
 
                 for (Score s : scores) {
                     String grade = (s.getScore() == null ? "-" : s.getScore().toString());
-                    System.out.printf(
-                            "%-4d %-30s %s%n",
-                            enrolls.getYear(),
-                            s.getSubject().getName(),
-                            grade
-                    );
+                    System.out.printf("%-4d %-30s %s%n", enrolls.getYear(), s.getSubject().getName(), grade);
                 }
             }
         }

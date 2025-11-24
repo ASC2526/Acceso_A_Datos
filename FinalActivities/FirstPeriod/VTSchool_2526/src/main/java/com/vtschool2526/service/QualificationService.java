@@ -23,9 +23,9 @@ public class QualificationService {
 
             q.setParameter("sid", idcard);
             q.setParameter("cid", courseId);
-            q.setMaxResults(1);
 
-            Enrollment enr = q.uniqueResult();
+            List<Enrollment> list = q.list();
+            Enrollment enr = list.isEmpty() ? null : list.get(0);
 
             if (enr == null) {
                 System.out.println("ERROR --> No enrollment found.");
@@ -66,7 +66,6 @@ public class QualificationService {
                             System.out.println("Invalid grade. Must be 0-10 or 99.");
                             continue;
                         }
-
                         s.setScore(grade);
                         session.merge(s);
                         break;

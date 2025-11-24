@@ -27,7 +27,7 @@ public class App {
 
         String option = args[0];
 
-        switch (option) {
+        switch (option) { // interactive menu
 
             case "-h", "--help" -> System.out.println(HELP_TEXT);
 
