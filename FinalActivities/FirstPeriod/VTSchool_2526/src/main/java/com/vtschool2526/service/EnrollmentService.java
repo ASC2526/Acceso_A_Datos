@@ -10,6 +10,7 @@ import org.hibernate.Session;
 import org.hibernate.Transaction;
 import org.hibernate.query.Query;
 
+import java.time.LocalDate;
 import java.util.List;
 
 public class EnrollmentService {
@@ -22,22 +23,23 @@ public class EnrollmentService {
 
             Student student = session.find(Student.class, idcard);
             if (student == null) {
-                System.out.println("ERROR --> Student not found.");
+                System.out.println("ERROR → Student not found: " + idcard);
                 return;
             }
 
             Course course = session.find(Course.class, courseId);
             if (course == null) {
-                System.out.println("ERROR --> Course not found.");
+                System.out.println("ERROR → Course not found: " + courseId);
                 return;
             }
 
-            // last enrollment of student in that course
+            // find last enrollment of this student in the course
             Query<Enrollment> qLast = session.createQuery(
                     "from Enrollment e " +
                             "where e.student.idcard = :sid and e.course.id = :cid " +
                             "order by e.year desc",
-                    Enrollment.class);
+                    Enrollment.class
+            );
 
             qLast.setParameter("sid", idcard);
             qLast.setParameter("cid", courseId);
@@ -45,51 +47,47 @@ public class EnrollmentService {
             List<Enrollment> listLast = qLast.list();
             Enrollment lastEnrollment = listLast.isEmpty() ? null : listLast.get(0);
 
-            int newYear;
-            if (lastEnrollment == null) {
-                newYear = 2023;
-            } else {
-                newYear = lastEnrollment.getYear() + 1;
-            }
+            int newYear = (lastEnrollment == null ? LocalDate.now().getYear() : lastEnrollment.getYear() + 1);
 
-            // check if student already enrolled that year
+            // check if student is already enrolled in any course that year
             Query<Long> qConflict = session.createQuery(
                     "select count(e) from Enrollment e " +
                             "where e.student.idcard = :sid and e.year = :yr",
-                    Long.class);
+                    Long.class
+            );
 
             qConflict.setParameter("sid", idcard);
             qConflict.setParameter("yr", newYear);
 
-            List<Long> conflictList = qConflict.list();
-            long conflict = conflictList.isEmpty() ? 0 : conflictList.get(0);
+            List<Long> countList = qConflict.list();
+            long conflict = countList.isEmpty() ? 0 : countList.get(0);
 
             if (conflict > 0) {
-                System.out.println("ERROR --> Student already enrolled in another course in year " + newYear);
+                System.out.println("ERROR → Student already enrolled in another course in year " + newYear);
                 return;
             }
+
             List<Integer> subjectsToEnroll;
 
             if (lastEnrollment == null) {
-
-                // if is first year, get subjects
+                // if is first year, get first year subjects
                 Query<Integer> q1 = session.createQuery(
                         "select sc.subject.id from SubjectCourse sc " +
                                 "where sc.course.id = :cid and sc.subject.year = 1",
-                        Integer.class);
+                        Integer.class
+                );
 
                 q1.setParameter("cid", courseId);
-
                 subjectsToEnroll = q1.list();
 
                 if (subjectsToEnroll.isEmpty()) {
-                    System.out.println("ERROR --> No first year subjects found.");
+                    System.out.println("ERROR → No first-year subjects found.");
                     return;
                 }
 
-            } else { // next years
-                String sql =
-                        "SELECT * FROM _da_vtschool_2526.subjects_pending_asc_2526(:sid, :cid)";
+            } else {
+                // if is not first year, get the pending subjects
+                String sql = "SELECT * FROM _da_vtschool_2526.subjects_pending_asc_2526(:sid, :cid)";
 
                 @SuppressWarnings("unchecked")
                 List<Integer> pending = session.createNativeQuery(sql)
@@ -98,7 +96,7 @@ public class EnrollmentService {
                         .list();
 
                 if (pending.isEmpty()) {
-                    System.out.println("ERROR --> Course already completed.");
+                    System.out.println("ERROR → Course already completed.");
                     return;
                 }
 
@@ -129,7 +127,7 @@ public class EnrollmentService {
             System.out.println("Enrollment completed successfully for year " + newYear);
 
         } catch (Exception e) {
-            System.out.println("Error enrolling student: " + e.getMessage());
+            System.out.println("ERROR → Enrollment failed: " + e.getMessage());
         }
     }
 }

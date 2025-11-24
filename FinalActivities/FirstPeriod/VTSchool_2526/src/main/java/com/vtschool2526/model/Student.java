@@ -24,6 +24,10 @@ public class Student {
     @Column(name = "email", length = 100)
     private String email;
 
+    @Column(name = "address", length = 256)
+    private String address;
+
+
     public String getIdcard() {
         return idcard;
     }
@@ -63,5 +67,7 @@ public class Student {
     public void setEmail(String email) {
         this.email = email;
     }
+    public String getAddress() { return address; }
+    public void setAddress(String address) { this.address = address; }
 
 }

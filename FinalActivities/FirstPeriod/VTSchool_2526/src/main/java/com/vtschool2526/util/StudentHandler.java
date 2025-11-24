@@ -53,5 +53,8 @@ public class StudentHandler extends DefaultHandler {
             students.add(current);
             current = null;
         }
+        else if (qName.equalsIgnoreCase("address")) {
+            current.setAddress(tagContent.trim());
+        }
     }
 }

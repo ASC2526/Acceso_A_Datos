@@ -2,6 +2,8 @@ package com.vtschool2526.service;
 
 import com.vtschool2526.model.Score;
 import com.vtschool2526.model.Enrollment;
+import com.vtschool2526.model.Student;
+import com.vtschool2526.model.Course;
 import com.vtschool2526.util.HibernateSession;
 import org.hibernate.Session;
 import org.hibernate.Transaction;
@@ -16,6 +18,18 @@ public class QualificationService {
 
         try (Session session = HibernateSession.openSession()) {
 
+            Student st = session.find(Student.class, idcard);
+            if (st == null) {
+                System.out.println("ERROR → Student not found: " + idcard);
+                return;
+            }
+
+            Course c = session.find(Course.class, courseId);
+            if (c == null) {
+                System.out.println("ERROR → Course not found: " + courseId);
+                return;
+            }
+
             // get latest enrollment
             Query<Enrollment> q = session.createQuery(
                     "from Enrollment e where e.student.idcard = :sid and e.course.id = :cid order by e.year desc",
@@ -28,7 +42,7 @@ public class QualificationService {
             Enrollment enr = list.isEmpty() ? null : list.get(0);
 
             if (enr == null) {
-                System.out.println("ERROR --> No enrollment found.");
+                System.out.println("ERROR → Student " + idcard + " is not enrolled in course " + courseId);
                 return;
             }
 
@@ -66,6 +80,7 @@ public class QualificationService {
                             System.out.println("Invalid grade. Must be 0-10 or 99.");
                             continue;
                         }
+
                         s.setScore(grade);
                         session.merge(s);
                         break;

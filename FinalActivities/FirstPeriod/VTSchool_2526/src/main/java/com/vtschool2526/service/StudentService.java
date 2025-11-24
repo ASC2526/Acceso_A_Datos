@@ -64,6 +64,14 @@ public class StudentService {
                         return;
                     }
 
+                    if(s.getAddress() != null && !s.getAddress().isEmpty()) {
+                        System.out.println("Invalid address: " + s.getAddress());
+                        System.out.println("ERROR --> Import aborted.");
+                        tx.rollback();
+                        return;
+                    }
+
+
                     session.persist(s);
                 }
 

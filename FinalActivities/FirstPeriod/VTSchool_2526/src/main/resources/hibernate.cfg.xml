@@ -2,9 +2,9 @@
     <session-factory>
 
         <property name="hibernate.connection.driver_class">org.postgresql.Driver</property>
-        <property name="hibernate.connection.url">jdbc:postgresql://aws-1-eu-west-1.pooler.supabase.com:5432/postgres?currentSchema=_da_vtschool_2526&amp;sslmode=require</property>
-        <property name="hibernate.connection.username">postgres.gvxugewnjoozlyepwtqa</property>
-        <property name="hibernate.connection.password">Alyad118...</property>
+        <property name="hibernate.connection.url">jdbc:postgresql://localhost:5432/postgres</property>
+        <property name="hibernate.connection.username">postgres</property>
+        <property name="hibernate.connection.password">postgres</property>
         <property name="hibernate.dialect">org.hibernate.dialect.PostgreSQLDialect</property>
 
         <mapping class="com.vtschool2526.model.Course"/>
