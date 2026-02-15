@@ -1,8 +1,0 @@
-1: Alley
-1: Car
-2: Cat
-2: Horse
-3: Horn
-3: Ship
-4: Show
-5: Tree

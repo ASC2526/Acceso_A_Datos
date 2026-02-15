@@ -1,5 +1,0 @@
-1: Alley
-2: Cat
-3: Horn
-4: Show
-5: Tree
