@@ -2,6 +2,7 @@ package com.asc2526.da.unit5.vtschool_rest_api.controller;
 
 import com.asc2526.da.unit5.vtschool_rest_api.entity.Enrollment;
 import com.asc2526.da.unit5.vtschool_rest_api.service.EnrollmentService;
+import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 
@@ -19,7 +20,7 @@ public class EnrollmentController {
 
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
-    public Enrollment enrollStudent(@RequestBody Enrollment enrollment) {
+    public Enrollment enrollStudent(@Valid @RequestBody Enrollment enrollment) {
         return enrollmentService.create(enrollment);
     }
 

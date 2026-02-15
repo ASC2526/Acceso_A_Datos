@@ -8,24 +8,25 @@ import jakarta.validation.constraints.*;
 @Table(name = "students", schema = "_da_vtschool_2526")
 public class Student {
     @Id
-    @Pattern(regexp = "\\d{8}", message = "Idcard must have exactly 8 digits")
     @Column(name = "idcard", nullable = false, length = 8)
+    @NotBlank(message = "IdCard is required")
+    @Size(min = 8, max = 8, message = "IdCard must have 8 characters")
     private String idcard;
 
-    @NotBlank
     @Column(name = "firstname", nullable = false, length = 50)
+    @NotBlank(message = "Firstname is required")
     private String firstname;
 
-    @NotBlank
     @Column(name = "lastname", nullable = false, length = 100)
+    @NotBlank(message = "Lastname is required")
     private String lastname;
 
-    @Pattern(regexp = "\\d{9}", message = "Phone must have 9 digits")
     @Column(name = "phone", length = 12)
+    @Pattern(regexp = "^\\d{0,12}$", message = "Phone must contain only digits")
     private String phone;
 
-    @Email(message = "Invalid email format")
     @Column(name = "email", length = 100)
+    @Email(message = "Invalid email format")
     private String email;
 
     @Column(name = "address", length = 256)

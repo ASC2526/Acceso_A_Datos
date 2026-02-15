@@ -1,6 +1,8 @@
 package com.asc2526.da.unit5.vtschool_rest_api.entity;
 
 import jakarta.persistence.*;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
 
 @Entity
 @Table(name = "enrollments", schema = "_da_vtschool_2526")
@@ -8,16 +10,19 @@ public class Enrollment {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "code", nullable = false)
+    @Column(name = "code")
     private Integer id;
 
-    @Column(name = "student", nullable = false, length = 12)
+    @Column(name = "student", nullable = false)
+    @NotBlank(message = "Student id is required")
     private String studentId;
 
     @Column(name = "course", nullable = false)
+    @NotNull(message = "Course id is required")
     private Integer courseId;
 
     @Column(name = "year", nullable = false)
+    @NotNull(message = "Year is required")
     private Integer year;
 
     public Enrollment() {

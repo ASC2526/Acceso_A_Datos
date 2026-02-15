@@ -12,13 +12,15 @@ public class Score {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "code", nullable = false)
+    @Column(name = "code")
     private Integer id;
 
     @Column(name = "enrollment_id", nullable = false)
+    @NotNull(message = "Enrollment id is required")
     private Integer enrollmentId;
 
     @Column(name = "subject_id", nullable = false)
+    @NotNull(message = "Subject id is required")
     private Integer subjectId;
 
 
