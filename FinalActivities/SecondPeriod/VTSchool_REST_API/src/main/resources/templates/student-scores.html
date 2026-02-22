@@ -10,7 +10,6 @@
 
     <h2>My scores</h2>
 
-    <!-- SELECT COURSE -->
     <form method="post" th:action="@{/student/scores}">
 
         <label><strong>Choose a course:</strong></label>
@@ -35,12 +34,10 @@
 
     <hr>
 
-    <!-- NO SCORES -->
     <div th:if="${scores == null or #lists.isEmpty(scores)}">
         <p>No scores available.</p>
     </div>
 
-    <!-- TABLE -->
     <table th:if="${scores != null and !#lists.isEmpty(scores)}"
            border="1"
            style="width:100%; text-align:center;">

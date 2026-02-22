@@ -73,24 +73,34 @@ public class StudentWebController {
 
         try {
 
-            String email = authentication.getName();
+            String loggedEmail = authentication.getName();
 
             Student current = studentService
-                    .findByEmail(email)
+                    .findByEmail(loggedEmail)
                     .orElseThrow();
+
+            String oldEmail = current.getEmail();
 
             student.setIdcard(current.getIdcard());
 
             studentService.update(current.getIdcard(), student);
 
-            request.getSession().invalidate();
+            if (!oldEmail.equals(student.getEmail())) {
+                request.getSession().invalidate();
+
+                redirectAttributes.addFlashAttribute(
+                        "successMessage",
+                        "Email changed. Please login again."
+                );
+                return "redirect:/login";
+            }
 
             redirectAttributes.addFlashAttribute(
                     "successMessage",
                     "Profile updated. Please login again."
             );
 
-            return "redirect:/login";
+            return "redirect:/student";
 
         } catch (Exception e) {
 
