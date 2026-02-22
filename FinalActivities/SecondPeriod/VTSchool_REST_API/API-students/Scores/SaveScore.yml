@@ -1,0 +1,23 @@
+info:
+  name: SaveScore
+  type: http
+  seq: 3
+
+http:
+  method: POST
+  url: http://localhost:8080/scores
+  body:
+    type: json
+    data: |
+      {
+        "enrollmentId": 1,
+        "subjectId": 2,
+        "score": 10
+      }
+  auth: inherit
+
+settings:
+  encodeUrl: true
+  timeout: 0
+  followRedirects: true
+  maxRedirects: 5

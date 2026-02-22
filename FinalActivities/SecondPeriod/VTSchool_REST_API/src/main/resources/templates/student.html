@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Student panel</title>
+    <link rel="stylesheet" th:href="@{/style.css}">
+</head>
+<body>
+
+<div class="form-card">
+
+    <h2>VT Institute</h2>
+
+    <p>
+        Welcome,
+        <span th:text="${student.email}"></span>
+    </p>
+
+    <br>
+
+    <a th:href="@{/student/edit}" class="submit-btn">
+        Edit my profile
+    </a>
+
+    <br><br>
+
+    <a th:href="@{/student/scores}" class="submit-btn">
+        Check my scores
+    </a>
+
+</div>
+
+</body>
+</html>

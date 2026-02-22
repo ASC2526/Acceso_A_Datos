@@ -1,0 +1,36 @@
+info:
+  name: PostStudents
+  type: http
+  seq: 2
+
+http:
+  method: POST
+  url: http://localhost:8080/students
+  body:
+    type: json
+    data: |
+      [
+        {
+          "idcard": "88880001",
+          "firstname": "Ana",
+          "lastname": "Lopez",
+          "email": "ana@test.com",
+          "phone": "600000001",
+          "address": "Calle 1"
+        },
+        {
+          "idcard": "88880002",
+          "firstname": "Luis",
+          "lastname": "Perez",
+          "email": "luis@test.com",
+          "phone": "600000002",
+          "address": "Calle 2"
+        }
+      ]
+  auth: inherit
+
+settings:
+  encodeUrl: true
+  timeout: 0
+  followRedirects: true
+  maxRedirects: 5

@@ -1,0 +1,26 @@
+info:
+  name: UpdateStudent
+  type: http
+  seq: 3
+
+http:
+  method: PUT
+  url: http://localhost:8080/students/88880001
+  body:
+    type: json
+    data: |-
+      {
+        "idcard": "88880001",
+        "firstname": "TestUpdated",
+        "lastname": "User",
+        "email": "nuevo@email.com",
+        "phone": "611111111",
+        "address": "Nueva dirección"
+      }
+  auth: inherit
+
+settings:
+  encodeUrl: true
+  timeout: 0
+  followRedirects: true
+  maxRedirects: 5

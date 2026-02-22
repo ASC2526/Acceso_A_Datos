@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Enroll student</title>
+    <link rel="stylesheet" th:href="@{/style.css}">
+</head>
+<body>
+
+<div class="form-card">
+
+    <h2>Enroll student</h2>
+
+    <p th:if="${successMessage != null}"
+       th:text="${successMessage}"
+       style="color:green;">
+    </p>
+
+    <p th:if="${errorMessage != null}"
+       th:text="${errorMessage}"
+       style="color:red;">
+    </p>
+
+    <form method="post" th:action="@{/admin/enroll}">
+
+        <div class="form-container">
+
+            <div class="select-box">
+                <label><strong>Student</strong></label>
+                <select name="studentId" size="8">
+                    <option th:each="student : ${students}"
+                            th:value="${student.idcard}"
+                            th:text="${student.lastname} + ', ' + ${student.firstname}">
+                    </option>
+                </select>
+            </div>
+            </div>
+
+            <div class="select-box">
+                <label><strong>Course</strong></label>
+                <select name="courseId" size="8">
+                    <option th:each="course : ${courses}"
+                            th:value="${course.id}"
+                            th:text="${course.name}">
+                    </option>
+                </select>
+            </div>
+
+        </div>
+
+        <button type="submit" class="submit-btn">Enroll</button>
+    </form>
+
+</div>
+
+</body>
+</html>

@@ -1,0 +1,22 @@
+info:
+  name: GetScoresByStudent&Course
+  type: http
+  seq: 2
+
+http:
+  method: GET
+  url: http://localhost:8080/scores?studentId=12332001&courseId=1
+  params:
+    - name: studentId
+      value: "12332001"
+      type: query
+    - name: courseId
+      value: "1"
+      type: query
+  auth: inherit
+
+settings:
+  encodeUrl: true
+  timeout: 0
+  followRedirects: true
+  maxRedirects: 5

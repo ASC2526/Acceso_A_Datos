@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>My scores</title>
+    <link rel="stylesheet" th:href="@{/style.css}">
+</head>
+<body>
+
+<div class="form-card">
+
+    <h2>My scores</h2>
+
+    <!-- SELECT COURSE -->
+    <form method="post" th:action="@{/student/scores}">
+
+        <label><strong>Choose a course:</strong></label>
+
+        <select name="courseId">
+            <option value="">-- None --</option>
+
+            <option th:each="course : ${courses}"
+                    th:value="${course.id}"
+                    th:text="${course.name}"
+                    th:selected="${course.id == selectedCourse}">
+            </option>
+        </select>
+
+        <br><br>
+
+        <button type="submit" class="submit-btn">
+            Load scores
+        </button>
+
+    </form>
+
+    <hr>
+
+    <!-- NO SCORES -->
+    <div th:if="${scores == null or #lists.isEmpty(scores)}">
+        <p>No scores available.</p>
+    </div>
+
+    <!-- TABLE -->
+    <table th:if="${scores != null and !#lists.isEmpty(scores)}"
+           border="1"
+           style="width:100%; text-align:center;">
+
+        <thead>
+        <tr>
+            <th>Subject</th>
+            <th>Course Year</th>
+            <th>Academic Year</th>
+            <th>Score</th>
+        </tr>
+        </thead>
+
+        <tbody>
+        <tr th:each="s : ${scores}">
+            <td th:text="${s.subjectName}"></td>
+            <td th:text="${s.subjectYear}"></td>
+            <td th:text="${s.academicYear}"></td>
+            <td th:text="${s.score != null ? s.score : '--'}"></td>
+        </tr>
+        </tbody>
+
+    </table>
+
+</div>
+
+</body>
+</html>

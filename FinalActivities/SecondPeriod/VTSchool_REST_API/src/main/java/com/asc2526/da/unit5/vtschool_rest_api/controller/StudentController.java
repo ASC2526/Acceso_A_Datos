@@ -30,9 +30,12 @@ public class StudentController {
 
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
-    public Student createStudent(@Valid @RequestBody Student student) {
-        return studentService.create(student);
+    public List<Student> createStudents(
+           @Valid @RequestBody List<Student> students
+    ) {
+        return studentService.create(students);
     }
+
 
     @PutMapping("/{idcard}")
     public Student updateStudent(

@@ -10,15 +10,16 @@ public interface EnrollmentRepository extends JpaRepository<Enrollment, Integer>
 
     Optional<Enrollment> findByStudentIdAndCourseId(String studentId, Integer courseId);
 
-    List<Enrollment> findByStudentIdAndYear(String studentId, Integer year);
-
     List<Enrollment> findByStudentId(String studentId);
 
     List<Enrollment> findByCourseId(Integer courseId);
 
     List<Enrollment> findByYear(Integer year);
 
-    boolean existsByStudentIdAndCourseId(String studentId, Integer courseId);
+    boolean existsByStudentIdAndYear(String studentId, Integer year);
 
     boolean existsByStudentId(String studentId);
+
+    boolean existsByStudentIdAndCourseId(String studentId, Integer courseId);
+
 }

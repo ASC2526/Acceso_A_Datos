@@ -5,9 +5,12 @@ import com.asc2526.da.unit5.vtschool_rest_api.exception.StudentAlreadyExistsExce
 import com.asc2526.da.unit5.vtschool_rest_api.exception.StudentNotFoundException;
 import com.asc2526.da.unit5.vtschool_rest_api.repository.EnrollmentRepository;
 import com.asc2526.da.unit5.vtschool_rest_api.repository.StudentRepository;
+import jakarta.transaction.Transactional;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Optional;
+
 
 @Service
 public class StudentService {
@@ -38,18 +41,27 @@ public class StudentService {
     }
 
 
-    public Student create(Student student) {
+    @Transactional
+    public List<Student> create(List<Student> students) {
 
-        if (student == null || student.getIdcard() == null) {
-            throw new IllegalArgumentException("Student data is required");
+        if (students == null || students.isEmpty()) {
+            throw new IllegalArgumentException("Student list cannot be empty");
         }
 
-        if (studentRepository.existsById(student.getIdcard())) {
-            throw new StudentAlreadyExistsException(student.getIdcard());
+        for (Student student : students) {
+
+            if (student.getIdcard() == null || student.getIdcard().isBlank()) {
+                throw new IllegalArgumentException("Student idcard is required");
+            }
+
+            if (studentRepository.existsById(student.getIdcard())) {
+                throw new StudentAlreadyExistsException(student.getIdcard());
+            }
         }
 
-        return studentRepository.save(student);
+        return studentRepository.saveAll(students);
     }
+
 
     public Student update(String idcard, Student updatedStudent) {
 
@@ -94,5 +106,10 @@ public class StudentService {
         }
 
         studentRepository.deleteById(idcard);
+    }
+
+
+    public Optional<Student> findByEmail(String email) {
+        return Optional.ofNullable(studentRepository.findByEmail(email));
     }
 }

@@ -4,10 +4,9 @@ import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 
 @SpringBootApplication
-public class VtSchoolRestApiApplication {
+public class VtSchoolThymeleafApplication {
 
     public static void main(String[] args) {
-        SpringApplication.run(VtSchoolRestApiApplication.class, args);
+        SpringApplication.run(VtSchoolThymeleafApplication.class, args);
     }
-
 }

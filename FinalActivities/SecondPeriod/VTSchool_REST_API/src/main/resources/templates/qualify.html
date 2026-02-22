@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Qualify student</title>
+    <link rel="stylesheet" th:href="@{/style.css}">
+</head>
+<body>
+
+<div class="form-card">
+
+    <h2>Qualify student</h2>
+
+    <form method="post" th:action="@{/admin/qualify/load}">
+
+        <label><strong>Choose a student:</strong></label>
+
+        <select name="studentId">
+            <option th:each="student : ${students}"
+                    th:value="${student.idcard}"
+                    th:text="${student.lastname} + ', ' + ${student.firstname} + ' ' + (${student.idcard})">
+            </option>
+        </select>
+
+        <br><br>
+
+        <label><strong>Choose a course:</strong></label>
+
+        <select name="courseId">
+            <option th:each="course : ${courses}"
+                    th:value="${course.id}"
+                    th:text="${course.name}">
+            </option>
+        </select>
+
+        <br><br>
+
+        <button type="submit" class="submit-btn">
+            Load subjects
+        </button>
+
+    </form>
+
+    <p th:if="${message != null}"
+       th:text="${message}"
+       style="color:red;">
+    </p>
+
+    <div th:if="${scores != null and !#lists.isEmpty(scores)}">
+
+        <hr>
+
+        <form method="post" th:action="@{/admin/qualify/save}">
+
+            <input type="hidden" name="studentId" th:value="${selectedStudent}" />
+            <input type="hidden" name="courseId" th:value="${selectedCourse}" />
+
+            <div th:each="score : ${scores}">
+
+                <label th:text="${score.subjectName}"></label>
+
+                <input type="hidden"
+                       name="scoreId"
+                       th:value="${score.scoreId}" />
+
+                <select name="scoreValue">
+                    <option value="">--</option>
+                    <option th:each="i : ${#numbers.sequence(0,10)}"
+                            th:value="${i}"
+                            th:text="${i}">
+                    </option>
+                </select>
+
+                <br><br>
+
+            </div>
+
+            <button type="submit" class="submit-btn">
+                Save scores
+            </button>
+
+        </form>
+
+    </div>
+
+</div>
+
+</body>
+</html>

@@ -2,13 +2,13 @@ package com.asc2526.da.unit5.vtschool_rest_api.service;
 
 import com.asc2526.da.unit5.vtschool_rest_api.entity.Enrollment;
 import com.asc2526.da.unit5.vtschool_rest_api.entity.Score;
+import com.asc2526.da.unit5.vtschool_rest_api.entity.Subject;
 import com.asc2526.da.unit5.vtschool_rest_api.exception.CourseNotFoundException;
 import com.asc2526.da.unit5.vtschool_rest_api.exception.EnrollmentNotFoundException;
 import com.asc2526.da.unit5.vtschool_rest_api.exception.StudentNotFoundException;
-import com.asc2526.da.unit5.vtschool_rest_api.repository.CourseRepository;
-import com.asc2526.da.unit5.vtschool_rest_api.repository.EnrollmentRepository;
-import com.asc2526.da.unit5.vtschool_rest_api.repository.ScoreRepository;
-import com.asc2526.da.unit5.vtschool_rest_api.repository.StudentRepository;
+import com.asc2526.da.unit5.vtschool_rest_api.repository.*;
+import com.asc2526.da.unit5.vtschool_rest_api.web.dto.ScoreDTO;
+import jakarta.transaction.Transactional;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
@@ -22,17 +22,20 @@ public class ScoreService {
     private final EnrollmentRepository enrollmentRepository;
     private final StudentRepository studentRepository;
     private final CourseRepository courseRepository;
+    private final SubjectRepository subjectRepository;
 
     public ScoreService(
             ScoreRepository scoreRepository,
             EnrollmentRepository enrollmentRepository,
             StudentRepository studentRepository,
-            CourseRepository courseRepository
+            CourseRepository courseRepository,
+            SubjectRepository subjectRepository
     ) {
         this.scoreRepository = scoreRepository;
         this.enrollmentRepository = enrollmentRepository;
         this.studentRepository = studentRepository;
         this.courseRepository = courseRepository;
+        this.subjectRepository = subjectRepository;
     }
 
 
@@ -40,12 +43,12 @@ public class ScoreService {
             Integer enrollmentId,
             String studentId,
             Integer courseId,
-            Boolean passed
+            Boolean passed,
+            Boolean nullScores
     ) {
 
         List<Score> result;
 
-        // por enrollmentId
         if (enrollmentId != null) {
 
             if (!enrollmentRepository.existsById(enrollmentId)) {
@@ -54,7 +57,6 @@ public class ScoreService {
 
             result = scoreRepository.findByEnrollmentId(enrollmentId);
         }
-        // por student y course
         else if (studentId != null && courseId != null) {
 
             if (!studentRepository.existsById(studentId)) {
@@ -73,23 +75,34 @@ public class ScoreService {
 
             result = scoreRepository.findByEnrollmentId(enrollment.getId());
         }
-        // sin filtros
         else {
             result = scoreRepository.findAll();
         }
 
-        // asignaturas aprobadas
         if (passed != null) {
 
             List<Score> filtered = new ArrayList<>();
 
             for (Score s : result) {
 
-                if (passed && s.getScore() >= 5) {
+                if (passed && s.getScore() != null && s.getScore() >= 5) {
                     filtered.add(s);
                 }
 
-                if (!passed && s.getScore() < 5) {
+                if (!passed && s.getScore() != null && s.getScore() < 5) {
+                    filtered.add(s);
+                }
+            }
+
+            return filtered;
+        }
+
+        if (nullScores != null && nullScores) {
+
+            List<Score> filtered = new ArrayList<>();
+
+            for (Score s : result) {
+                if (s.getScore() == null) {
                     filtered.add(s);
                 }
             }
@@ -100,35 +113,101 @@ public class ScoreService {
         return result;
     }
 
-    public Score save(Score score) {
 
-        if (score == null ||
-                score.getEnrollmentId() == null ||
-                score.getSubjectId() == null ||
-                score.getScore() == null) {
-            throw new IllegalArgumentException("Invalid score data");
+    public List<ScoreDTO> findPendingScores(String studentId, Integer courseId) {
+
+        List<Score> scores =
+                scoreRepository.findPendingByStudentAndCourse(studentId, courseId);
+
+        List<ScoreDTO> result = new ArrayList<>();
+
+        for (Score score : scores) {
+
+            Enrollment enrollment = enrollmentRepository
+                    .findById(score.getEnrollmentId())
+                    .orElseThrow();
+
+            Subject subject = subjectRepository.findById(score.getSubjectId())
+                    .orElseThrow();
+
+            result.add(new ScoreDTO(
+                    score.getId(),
+                    subject.getName(),
+                    subject.getYear(),
+                    enrollment.getYear(),
+                    score.getScore()
+            ));
         }
 
-        if (score.getScore() < 0 || score.getScore() > 10) {
+        return result;
+    }
+
+    @Transactional
+    public List<Score> saveAll(List<Score> scores) {
+
+        if (scores == null || scores.isEmpty()) {
+            throw new IllegalArgumentException("Score list cannot be empty");
+        }
+
+        List<Score> result = new ArrayList<>();
+
+        for (Score score : scores) {
+
+            if (score.getEnrollmentId() == null ||
+                    score.getSubjectId() == null ||
+                    score.getScore() == null) {
+                throw new IllegalArgumentException("Invalid score data");
+            }
+
+            if (score.getScore() < 0 || score.getScore() > 10) {
+                throw new IllegalArgumentException("Score must be between 0 and 10");
+            }
+
+            if (!enrollmentRepository.existsById(score.getEnrollmentId())) {
+                throw new EnrollmentNotFoundException(score.getEnrollmentId());
+            }
+
+            Optional<Score> existing =
+                    scoreRepository.findByEnrollmentIdAndSubjectId(
+                            score.getEnrollmentId(),
+                            score.getSubjectId()
+                    );
+
+            if (existing.isPresent()) {
+                Score stored = existing.get();
+                stored.setScore(score.getScore());
+                result.add(scoreRepository.save(stored));
+            } else {
+                result.add(scoreRepository.save(score));
+            }
+        }
+
+        return result;
+    }
+
+    public List<ScoreDTO> getScoresForStudent(
+            String studentId,
+            Integer courseId
+    ) {
+        return scoreRepository.findScoresForStudent(studentId, courseId);
+    }
+
+
+    @Transactional
+    public void updateScore(Integer scoreId, Integer value) {
+
+        if (value < 0 || value > 10) {
             throw new IllegalArgumentException("Score must be between 0 and 10");
         }
 
-        if (!enrollmentRepository.existsById(score.getEnrollmentId())) {
-            throw new EnrollmentNotFoundException(score.getEnrollmentId());
-        }
-
-        Optional<Score> existing =
-                scoreRepository.findByEnrollmentIdAndSubjectId(
-                        score.getEnrollmentId(),
-                        score.getSubjectId()
+        Score score = scoreRepository.findById(scoreId)
+                .orElseThrow(() ->
+                        new IllegalArgumentException("Score not found")
                 );
 
-        if (existing.isPresent()) {
-            Score stored = existing.get();
-            stored.setScore(score.getScore());
-            return scoreRepository.save(stored);
-        }
+        score.setScore(value);
 
-        return scoreRepository.save(score);
+        scoreRepository.save(score);
     }
+
 }
