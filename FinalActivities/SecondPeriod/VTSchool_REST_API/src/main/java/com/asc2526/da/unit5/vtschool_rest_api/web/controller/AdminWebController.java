@@ -41,7 +41,7 @@ public class AdminWebController {
 
     // examen
     @GetMapping("/admin/add-student")
-    public String addStudent(Model model) {
+    public String addStudent() {
         return "add-student";
     }
 
