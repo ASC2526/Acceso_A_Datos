@@ -5,8 +5,10 @@ import com.asc2526.da.unit5.vtschool_rest_api.entity.Student;
 import com.asc2526.da.unit5.vtschool_rest_api.exception.EnrollmentAlreadyExistsException;
 import com.asc2526.da.unit5.vtschool_rest_api.service.*;
 import com.asc2526.da.unit5.vtschool_rest_api.web.dto.ScoreDTO;
+import jakarta.validation.Valid;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
@@ -37,6 +39,34 @@ public class AdminWebController {
         return "admin";
     }
 
+    // examen
+    @GetMapping("/admin/add-student")
+    public String addStudent(Model model) {
+        return "add-student";
+    }
+
+    @PostMapping("/admin/add-student")
+    public String addStudentSubmit(@ModelAttribute("student") @Valid Student student,
+                                   RedirectAttributes redirectAttributes,
+                                   BindingResult bindingResult)
+    {
+        if(bindingResult.hasErrors()) {
+            return "add-student";
+        }
+        try {
+            studentService.create(student);
+            redirectAttributes.addFlashAttribute(
+                    "successMessage",
+                    "Student created successfully."
+            );
+        } catch (Exception e) {
+            redirectAttributes.addFlashAttribute(
+                    "errorMessage",
+                    "Error saving the student"
+            );
+        }
+        return "redirect:/admin/add-student";
+    }
     // enroll
 
     @GetMapping("/admin/enroll")

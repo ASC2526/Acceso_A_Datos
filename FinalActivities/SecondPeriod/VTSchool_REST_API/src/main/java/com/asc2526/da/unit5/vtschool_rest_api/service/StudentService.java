@@ -63,6 +63,19 @@ public class StudentService {
         return studentRepository.saveAll(students);
     }
 
+    public Student create(Student student) {
+        if (student == null || student.getIdcard().isBlank()) {
+            throw new IllegalArgumentException("Invalid student argument");
+        }
+        if(student.getIdcard() == null) {
+            throw new IllegalArgumentException("Student idcard is required");
+        }
+        if (studentRepository.existsById(student.getIdcard())) {
+            throw new StudentAlreadyExistsException(student.getIdcard());
+        }
+
+        return studentRepository.save(student);
+    }
 
     public Student update(String idcard, Student updatedStudent) {
 
@@ -119,4 +132,4 @@ public class StudentService {
     }
 
     }
-}
+
