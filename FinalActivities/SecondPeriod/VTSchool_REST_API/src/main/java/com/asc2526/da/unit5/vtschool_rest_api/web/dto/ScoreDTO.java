@@ -4,8 +4,8 @@ public class ScoreDTO {
 
     private Integer scoreId;
     private String subjectName;
-    private Integer subjectYear;   // 1 o 2
-    private Integer academicYear;  // 2025
+    private Integer subjectYear;
+    private Integer academicYear;
     private Integer score;
 
     public ScoreDTO(Integer scoreId,
