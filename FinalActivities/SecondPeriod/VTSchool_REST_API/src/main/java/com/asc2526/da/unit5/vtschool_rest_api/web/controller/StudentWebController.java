@@ -1,5 +1,6 @@
 package com.asc2526.da.unit5.vtschool_rest_api.web.controller;
 
+import com.asc2526.da.unit5.vtschool_rest_api.entity.Course;
 import com.asc2526.da.unit5.vtschool_rest_api.entity.Student;
 import com.asc2526.da.unit5.vtschool_rest_api.service.CourseService;
 import com.asc2526.da.unit5.vtschool_rest_api.service.ScoreService;
@@ -10,6 +11,7 @@ import jakarta.validation.Valid;
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
@@ -66,10 +68,14 @@ public class StudentWebController {
     @PostMapping("/edit")
     public String updateProfile(
             @Valid Student student,
+            BindingResult bindingResult,
             Authentication authentication,
             HttpServletRequest request,
             RedirectAttributes redirectAttributes
     ) {
+        if(bindingResult.hasErrors()) {
+            return "edit-profile";
+        }
 
         try {
 
@@ -124,7 +130,15 @@ public class StudentWebController {
                 .findByEmail(email)
                 .orElseThrow();
 
-        model.addAttribute("courses", courseService.findAll());
+        List<Course> coursesEnrolled = courseService
+                .findEnrolledCourses(student.getIdcard());
+
+        model.addAttribute("courses", coursesEnrolled);
+
+        if(coursesEnrolled.isEmpty()) {
+            model.addAttribute("message",
+                    "No enrollment for this student in any course.");
+        }
 
         List<ScoreDTO> scores =
                 scoreService.getScoresForStudent(student.getIdcard(), null);
@@ -147,7 +161,15 @@ public class StudentWebController {
                 .findByEmail(email)
                 .orElseThrow();
 
-        model.addAttribute("courses", courseService.findAll());
+        List<Course> coursesEnrolled = courseService
+                .findEnrolledCourses(student.getIdcard());
+
+        model.addAttribute("courses", coursesEnrolled);
+
+        if(coursesEnrolled.isEmpty()) {
+            model.addAttribute("message",
+                    "No enrollment for this student in any course.");
+        }
         model.addAttribute("selectedCourse", courseId);
 
         List<ScoreDTO> scores =

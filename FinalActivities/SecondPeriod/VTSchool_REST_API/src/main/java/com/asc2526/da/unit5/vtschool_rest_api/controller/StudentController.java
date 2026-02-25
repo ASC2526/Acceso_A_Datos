@@ -45,6 +45,7 @@ public class StudentController {
         return studentService.update(idcard, student);
     }
 
+
     @DeleteMapping("/{idcard}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
     public void deleteStudent(@PathVariable String idcard) {

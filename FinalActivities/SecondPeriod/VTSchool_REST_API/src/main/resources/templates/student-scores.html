@@ -9,6 +9,8 @@
 <div class="form-card">
 
     <h2>My scores</h2>
+    <p th:if="${errorMessage}" th:text="${errorMessage}" style="color:red;"></p>
+    <p th:if="${successMessage}" th:text="${successMessage}" style="color:green;"></p>
 
     <form method="post" th:action="@{/student/scores}">
 
@@ -61,6 +63,9 @@
         </tbody>
 
     </table>
+
+    <br>
+    <a th:href="@{/student}">Back to menu</a>
 
 </div>
 

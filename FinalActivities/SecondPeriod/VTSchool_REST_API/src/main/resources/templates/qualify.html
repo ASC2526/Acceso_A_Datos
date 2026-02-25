@@ -10,6 +10,9 @@
 
     <h2>Qualify student</h2>
 
+    <p th:if="${errorMessage}" th:text="${errorMessage}" style="color:red;"></p>
+    <p th:if="${successMessage}" th:text="${successMessage}" style="color:green;"></p>
+
     <form method="post" th:action="@{/admin/qualify/load}">
 
         <label><strong>Choose a student:</strong></label>
@@ -37,6 +40,9 @@
         <button type="submit" class="submit-btn">
             Load subjects
         </button>
+
+        <br>
+        <a th:href="@{/admin}">Back to menu</a>
 
     </form>
 

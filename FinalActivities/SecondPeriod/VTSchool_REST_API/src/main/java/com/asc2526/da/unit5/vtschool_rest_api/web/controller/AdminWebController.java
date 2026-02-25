@@ -1,6 +1,8 @@
 package com.asc2526.da.unit5.vtschool_rest_api.web.controller;
 
 import com.asc2526.da.unit5.vtschool_rest_api.entity.Enrollment;
+import com.asc2526.da.unit5.vtschool_rest_api.entity.Student;
+import com.asc2526.da.unit5.vtschool_rest_api.exception.EnrollmentAlreadyExistsException;
 import com.asc2526.da.unit5.vtschool_rest_api.service.*;
 import com.asc2526.da.unit5.vtschool_rest_api.web.dto.ScoreDTO;
 import org.springframework.stereotype.Controller;
@@ -52,6 +54,7 @@ public class AdminWebController {
             Integer courseId,
             RedirectAttributes redirectAttributes
     ) {
+
         try {
 
             Enrollment enrollment = new Enrollment();
@@ -66,13 +69,30 @@ public class AdminWebController {
                     "Student enrolled successfully."
             );
 
+        } catch (EnrollmentAlreadyExistsException e) {
+
+            redirectAttributes.addFlashAttribute(
+                    "errorMessage",
+                    "Student is already enrolled this year."
+            );
+
+        } catch (IllegalStateException e) {
+
+            redirectAttributes.addFlashAttribute(
+                    "errorMessage",
+                    e.getMessage()
+            );
+
         } catch (Exception e) {
 
             redirectAttributes.addFlashAttribute(
                     "errorMessage",
-                    "Error enrolling student"
+                    "Unexpected error enrolling student."
             );
         }
+
+        redirectAttributes.addFlashAttribute("selectedStudent", studentId);
+        redirectAttributes.addFlashAttribute("selectedCourse", courseId);
 
         return "redirect:/admin/enroll";
     }
@@ -82,8 +102,36 @@ public class AdminWebController {
     @GetMapping("/admin/qualify")
     public String showQualifyPage(Model model) {
 
-        model.addAttribute("students", studentService.findAll());
+        List<Student> students =
+                studentService.findStudentsWithPendingScores();
+
+        model.addAttribute("students", students);
         model.addAttribute("courses", courseService.findAll());
+
+        if (students.isEmpty()) {
+            model.addAttribute("message",
+                    "No students pending qualification.");
+        }
+
+        if (model.containsAttribute("selectedStudent")
+                && model.containsAttribute("selectedCourse")) {
+
+            String studentId =
+                    (String) model.getAttribute("selectedStudent");
+
+            Integer courseId =
+                    (Integer) model.getAttribute("selectedCourse");
+
+            List<ScoreDTO> pending =
+                    scoreService.findPendingScores(studentId, courseId);
+
+            if (pending.isEmpty()) {
+                model.addAttribute("message",
+                        "No pending subjects to qualify.");
+            } else {
+                model.addAttribute("scores", pending);
+            }
+        }
 
         return "qualify";
     }
@@ -92,44 +140,21 @@ public class AdminWebController {
     public String loadPendingSubjects(
             String studentId,
             Integer courseId,
-            Model model,
             RedirectAttributes redirectAttributes
     ) {
 
-        try {
+        redirectAttributes.addFlashAttribute("selectedStudent", studentId);
+        redirectAttributes.addFlashAttribute("selectedCourse", courseId);
 
-            List<ScoreDTO> pending =
-                    scoreService.findPendingScores(studentId, courseId);
-
-            model.addAttribute("students", studentService.findAll());
-            model.addAttribute("courses", courseService.findAll());
-            model.addAttribute("selectedStudent", studentId);
-            model.addAttribute("selectedCourse", courseId);
-
-            if (pending.isEmpty()) {
-                model.addAttribute("message",
-                        "No pending subjects to qualify.");
-            } else {
-                model.addAttribute("scores", pending);
-            }
-
-            return "qualify";
-
-        } catch (Exception e) {
-
-            redirectAttributes.addFlashAttribute(
-                    "errorMessage",
-                    "Unexpected error loading subjects"
-            );
-
-            return "redirect:/admin/qualify";
-        }
+        return "redirect:/admin/qualify";
     }
 
     @PostMapping("/admin/qualify/save")
     public String saveScores(
             @RequestParam List<Integer> scoreId,
             @RequestParam List<Integer> scoreValue,
+            @RequestParam String studentId,
+            @RequestParam Integer courseId,
             RedirectAttributes redirectAttributes
     ) {
 
@@ -157,6 +182,9 @@ public class AdminWebController {
                     "Error saving scores"
             );
         }
+
+        redirectAttributes.addFlashAttribute("selectedStudent", studentId);
+        redirectAttributes.addFlashAttribute("selectedCourse", courseId);
 
         return "redirect:/admin/qualify";
     }

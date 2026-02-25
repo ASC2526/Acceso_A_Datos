@@ -21,11 +21,19 @@
         Edit my profile
     </a>
 
-    <br><br>
+    <br>
 
     <a th:href="@{/student/scores}" class="submit-btn">
         Check my scores
     </a>
+
+    <br>
+    <form th:action="@{/logout}" method="post">
+        <input type="hidden"
+               th:name="${_csrf.parameterName}"
+               th:value="${_csrf.token}" />
+        <button type="submit">Logout</button>
+    </form>
 
 </div>
 

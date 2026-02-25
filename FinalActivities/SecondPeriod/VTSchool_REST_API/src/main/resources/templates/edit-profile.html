@@ -9,46 +9,66 @@
 <div class="form-card">
 
     <h2>Edit profile</h2>
+    <p th:if="${errorMessage}" th:text="${errorMessage}" style="color:red;"></p>
+    <p th:if="${successMessage}" th:text="${successMessage}" style="color:green;"></p>
 
-    <form method="post" th:action="@{/student/edit}">
+    <form method="post"
+          th:object="${student}"
+          th:action="@{/student/edit}">
 
         <label>ID Card:</label>
         <input type="text"
-               th:value="${student.idcard}"
+               th:field="*{idcard}"
                readonly />
 
-        <input type="hidden"
-               name="idcard"
-               th:value="${student.idcard}" />
         <br><br>
 
         <label>First Name:</label>
         <input type="text"
-               name="firstname"
-               th:value="${student.firstname}"
-               required />
+               th:field="*{firstname}" />
+
+        <p th:if="${#fields.hasErrors('firstname')}"
+           th:errors="*{firstname}"
+           style="color:red;"></p>
 
         <br><br>
 
         <label>Last Name:</label>
         <input type="text"
-               name="lastname"
-               th:value="${student.lastname}"
-               required />
+               th:field="*{lastname}" />
+
+        <p th:if="${#fields.hasErrors('lastname')}"
+           th:errors="*{lastname}"
+           style="color:red;"></p>
 
         <br><br>
 
         <label>Email:</label>
         <input type="email"
-               name="email"
-               th:value="${student.email}"
-               required />
+               th:field="*{email}" />
+
+        <p th:if="${#fields.hasErrors('email')}"
+           th:errors="*{email}"
+           style="color:red;"></p>
+
+        <br><br>
+
+        <label>Phone:</label>
+        <input type="text"
+               th:field="*{phone}" />
+
+        <p th:if="${#fields.hasErrors('phone')}"
+           th:errors="*{phone}"
+           style="color:red;"></p>
 
         <br><br>
 
         <button type="submit" class="submit-btn">
             Save
         </button>
+
+        <br>
+        <a th:href="@{/student}">Back to menu</a>
 
     </form>
 

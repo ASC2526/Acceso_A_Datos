@@ -52,7 +52,7 @@ public class EnrollmentService {
                 .orElseThrow(() -> new CourseNotFoundException(courseId));
 
         int currentYear = Year.now().getValue();
-        if (year < 2000 || year > currentYear + 1) {
+        if (year < currentYear || year > currentYear + 1) {
             throw new IllegalArgumentException("Invalid academic year");
         }
 

@@ -12,6 +12,15 @@
 
     <a href="/admin/enroll" class="button">Enroll student</a>
     <a href="/admin/qualify" class="button">Qualify student</a>
+    <a href="/admin/statistics" class="button">Stats</a>
+
+    <br>
+    <form th:action="@{/logout}" method="post">
+        <input type="hidden"
+               th:name="${_csrf.parameterName}"
+               th:value="${_csrf.token}" />
+        <button type="submit">Logout</button>
+    </form>
 </div>
 
 </body>

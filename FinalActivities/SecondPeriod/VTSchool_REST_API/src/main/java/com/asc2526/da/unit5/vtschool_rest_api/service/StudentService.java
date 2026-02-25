@@ -6,6 +6,7 @@ import com.asc2526.da.unit5.vtschool_rest_api.exception.StudentNotFoundException
 import com.asc2526.da.unit5.vtschool_rest_api.repository.EnrollmentRepository;
 import com.asc2526.da.unit5.vtschool_rest_api.repository.StudentRepository;
 import jakarta.transaction.Transactional;
+import org.jspecify.annotations.Nullable;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -111,5 +112,11 @@ public class StudentService {
 
     public Optional<Student> findByEmail(String email) {
         return Optional.ofNullable(studentRepository.findByEmail(email));
+    }
+    
+    public List<Student> findStudentsWithPendingScores() {
+        return studentRepository.findStudentsWithNullScores();
+    }
+
     }
 }

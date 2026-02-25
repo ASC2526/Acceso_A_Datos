@@ -37,6 +37,7 @@ public interface ScoreRepository extends JpaRepository<Score, Integer> {
     );
 
     Optional<Score> findByEnrollmentIdAndSubjectId(Integer enrollmentId, Integer subjectId);
+
     @Query("""
 SELECT new com.asc2526.da.unit5.vtschool_rest_api.web.dto.ScoreDTO(
     s.id,
@@ -50,7 +51,7 @@ JOIN Enrollment e ON s.enrollmentId = e.id
 JOIN Subject sub ON s.subjectId = sub.id
 WHERE e.studentId = :studentId
 AND (:courseId IS NULL OR e.courseId = :courseId)
-ORDER BY e.year DESC, sub.year ASC
+ORDER BY e.year DESC, sub.year ASC, sub.name ASC
 """)
     List<ScoreDTO> findScoresForStudent(
             String studentId,

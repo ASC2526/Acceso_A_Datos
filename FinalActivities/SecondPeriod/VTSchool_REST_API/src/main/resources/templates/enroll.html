@@ -29,7 +29,8 @@
                 <select name="studentId" size="8">
                     <option th:each="student : ${students}"
                             th:value="${student.idcard}"
-                            th:text="${student.lastname} + ', ' + ${student.firstname}">
+                            th:text="${student.lastname} + ', ' + ${student.firstname}"
+                            th:selected="${student.idcard == selectedStudent}">
                     </option>
                 </select>
             </div>
@@ -40,14 +41,16 @@
                 <select name="courseId" size="8">
                     <option th:each="course : ${courses}"
                             th:value="${course.id}"
-                            th:text="${course.name}">
+                            th:text="${course.name}"
+                            th:selected="${course.id == selectedCourse}">
                     </option>
                 </select>
             </div>
 
-        </div>
-
         <button type="submit" class="submit-btn">Enroll</button>
+
+        <br>
+        <a th:href="@{/admin}">Back to menu</a>
     </form>
 
 </div>

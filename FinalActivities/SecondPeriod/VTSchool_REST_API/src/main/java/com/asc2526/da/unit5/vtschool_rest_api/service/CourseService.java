@@ -32,5 +32,8 @@ public class CourseService {
                 .orElseThrow(() -> new CourseNotFoundException(id));
     }
 
+    public List<Course> findEnrolledCourses(String studentId) {
+        return courseRepository.findCoursesEnrolledOfStudent(studentId);
+    }
 
 }
