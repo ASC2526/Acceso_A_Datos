@@ -7,10 +7,12 @@ import com.asc2526.da.unit5.vtschool_rest_api.exception.CourseNotFoundException;
 import com.asc2526.da.unit5.vtschool_rest_api.exception.EnrollmentNotFoundException;
 import com.asc2526.da.unit5.vtschool_rest_api.exception.StudentNotFoundException;
 import com.asc2526.da.unit5.vtschool_rest_api.repository.*;
+import com.asc2526.da.unit5.vtschool_rest_api.web.dto.ScoreCourseYearDTO;
 import com.asc2526.da.unit5.vtschool_rest_api.web.dto.ScoreDTO;
 import jakarta.transaction.Transactional;
 import org.springframework.stereotype.Service;
 
+import java.time.Year;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -190,6 +192,21 @@ public class ScoreService {
             Integer courseId
     ) {
         return scoreRepository.findScoresForStudent(studentId, courseId);
+    }
+
+    public List<ScoreCourseYearDTO> getScoresForCourseYear(
+            Integer courseId,
+            Integer year
+    ) {
+
+        courseRepository.findById(courseId)
+                .orElseThrow(() -> new CourseNotFoundException(courseId));
+
+        int currentYear = Year.now().getValue();
+        if(year > currentYear || year < 2023) {
+            throw new IllegalArgumentException("Invalid academic year");
+        }
+        return scoreRepository.findScoresForCourseYear(courseId, year);
     }
 
 

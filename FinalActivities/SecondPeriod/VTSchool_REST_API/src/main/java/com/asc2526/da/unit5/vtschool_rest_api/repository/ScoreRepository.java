@@ -1,6 +1,7 @@
 package com.asc2526.da.unit5.vtschool_rest_api.repository;
 
 import com.asc2526.da.unit5.vtschool_rest_api.entity.Score;
+import com.asc2526.da.unit5.vtschool_rest_api.web.dto.ScoreCourseYearDTO;
 import com.asc2526.da.unit5.vtschool_rest_api.web.dto.ScoreDTO;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
@@ -57,4 +58,23 @@ ORDER BY e.year DESC, sub.year ASC, sub.name ASC
             String studentId,
             Integer courseId
     );
+
+
+    @Query("""
+SELECT new com.asc2526.da.unit5.vtschool_rest_api.web.dto.ScoreCourseYearDTO(
+    e.year,
+    s.score,
+    e.studentId,
+    sub.year,
+    sub.name
+)
+FROM Score s
+JOIN Enrollment e ON s.enrollmentId = e.id
+JOIN Student st ON e.studentId = st.idcard
+JOIN Subject sub ON s.subjectId = sub.id
+WHERE e.courseId = :courseId
+AND e.year = :year
+ORDER BY st.idcard DESC, sub.year ASC, sub.name ASC
+""")
+    List<ScoreCourseYearDTO> findScoresForCourseYear(Integer courseId, Integer year);
 }
