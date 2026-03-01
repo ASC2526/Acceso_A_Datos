@@ -93,7 +93,7 @@ public class GlobalExceptionHandler {
 
     // generic error
     @ExceptionHandler(Exception.class)
-    public ResponseEntity<ApiError> handleGeneric(Exception ex) {
+    public ResponseEntity<ApiError> handleGeneric() {
         return ResponseEntity
                 .status(HttpStatus.INTERNAL_SERVER_ERROR)
                 .body(new ApiError(
@@ -121,7 +121,6 @@ public class GlobalExceptionHandler {
                         ex.getMessage()
                 ));
     }
-
 
 
 }

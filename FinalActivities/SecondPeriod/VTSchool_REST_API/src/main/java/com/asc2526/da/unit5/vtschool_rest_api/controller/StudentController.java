@@ -31,7 +31,7 @@ public class StudentController {
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
     public List<Student> createStudents(
-           @Valid @RequestBody List<Student> students
+           @Valid @RequestBody List<@Valid Student> students
     ) {
         return studentService.create(students);
     }

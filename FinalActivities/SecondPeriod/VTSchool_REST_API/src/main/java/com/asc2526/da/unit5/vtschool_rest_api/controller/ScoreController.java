@@ -29,7 +29,7 @@ public class ScoreController {
         return scoreService.findScores(enrollmentId, studentId, courseId, passed, nullScores);
     }
 
-    @GetMapping
+    @GetMapping("/course-year")
     public List<ScoreCourseYearDTO> getScoresInCourseYear(@RequestParam Integer courseId,
                                               @RequestParam Integer year) {
         return scoreService.getScoresForCourseYear(courseId, year);

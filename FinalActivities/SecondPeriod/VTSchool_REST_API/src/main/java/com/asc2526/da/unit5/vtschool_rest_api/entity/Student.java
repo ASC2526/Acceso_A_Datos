@@ -22,7 +22,7 @@ public class Student {
     private String lastname;
 
     @Column(name = "phone", length = 12)
-    @Pattern(regexp = "^\\d{0,12}$", message = "Phone must contain only digits, and 9 numbers at most")
+    @Pattern(regexp = "^\\d{9}$", message = "Phone must have 9 digits")
     private String phone;
 
     @Column(name = "email", length = 100)
