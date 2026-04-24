@@ -13,6 +13,7 @@ import jakarta.transaction.Transactional;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
+import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
 
@@ -50,23 +51,6 @@ public class LendingService {
             throw new UserFinedException(userId);
         }
 
-        Optional<Reservation> reservOpt = reservationRepository
-                .findOldestActiveReservation(isbn);
-
-        if (reservOpt.isPresent())
-        {
-            Reservation r = reservOpt.get();
-
-            if (Objects.equals(r.getBorrower(), userId))
-            {
-                r.setLending(lending.getId());
-                reservationRepository.save(r);
-            }
-            else {
-                throw new BookAlreadyReservedException(isbn);
-            }
-        }
-
         int count = lendingRepository.countActiveLendingsByUser(userId);
 
         if (count >= 3) {
@@ -79,7 +63,59 @@ public class LendingService {
             throw new BookNotAvailableException(isbn);
         }
 
+        Optional<Reservation> reservOpt = reservationRepository
+                .findOldestActiveReservation(isbn);
+
+        if (reservOpt.isPresent())
+        {
+            Reservation r = reservOpt.get();
+
+            if (Objects.equals(r.getBorrower(), userId))
+            {
+
+                lending.setLendingdate(LocalDate.now());
+                lending.setReturningdate(null);
+
+                Lending saved = lendingRepository.save(lending);
+
+                r.setLending(lending.getId());
+                reservationRepository.save(r);
+
+                return saved;
+            }
+            else {
+                throw new BookAlreadyReservedException(isbn);
+            }
+        }
+
+        lending.setLendingdate(LocalDate.now());
+        lending.setReturningdate(null);
 
         return lendingRepository.save(lending);
+    }
+
+    public List<Lending> getAllLendings() {
+        return lendingRepository.findAll();
+    }
+
+
+    public List<Lending> getLendingsByUser(String userId) {
+
+        userRepository.findById(userId)
+                .orElseThrow(() -> new UserNotFoundException(userId));
+
+        return lendingRepository.findByBorrower(userId);
+    }
+
+    public List<Lending> getActiveLendings() {
+        return lendingRepository.findByReturningdateIsNull();
+    }
+
+    public List<Lending> getLendingsByBook(String isbn) {
+
+        bookRepository.findById(isbn)
+                .orElseThrow(() -> new BookNotFoundException(isbn));
+
+        return lendingRepository.findByBook(isbn);
     }
 }

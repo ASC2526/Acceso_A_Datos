@@ -30,6 +30,16 @@ public class GlobalExceptionHandler {
                 ));
     }
 
+    @ExceptionHandler(CategoryNotFoundException.class)
+    public ResponseEntity<ApiError> handleCategoryNotFound(CategoryNotFoundException ex) {
+        return ResponseEntity
+                .status(HttpStatus.NOT_FOUND)
+                .body(new ApiError(
+                        HttpStatus.NOT_FOUND.value(),
+                        ex.getMessage()
+                ));
+    }
+
     // 409 conflict
 
     @ExceptionHandler(MaxBooksExceededException.class)

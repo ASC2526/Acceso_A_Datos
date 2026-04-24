@@ -1,8 +1,10 @@
 package com.asc2526.da.unit5.library.controller;
 
+import com.asc2526.da.unit5.library.model.Lending;
 import com.asc2526.da.unit5.library.service.LendingService;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 @RestController
 @RequestMapping("/lendings")
@@ -12,5 +14,30 @@ public class LendingController {
 
     public LendingController(LendingService lendingService) {
         this.lendingService = lendingService;
+    }
+
+    @GetMapping
+    public List<Lending> getAllLendings() {
+        return lendingService.getAllLendings();
+    }
+
+    @GetMapping("/user/{userId}")
+    public List<Lending> getLendingsByUser(@PathVariable String userId) {
+        return lendingService.getLendingsByUser(userId);
+    }
+
+    @PostMapping
+    public Lending lendBook(@RequestBody Lending lending) {
+        return lendingService.lendBook(lending);
+    }
+
+    @GetMapping("/active")
+    public List<Lending> getActiveLendings() {
+        return lendingService.getActiveLendings();
+    }
+
+    @GetMapping("/book/{isbn}")
+    public List<Lending> getLendingsByBook(@PathVariable String isbn) {
+        return lendingService.getLendingsByBook(isbn);
     }
 }
