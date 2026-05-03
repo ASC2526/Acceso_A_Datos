@@ -6,6 +6,7 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
 import java.util.List;
+import java.util.Optional;
 
 public interface LendingRepository extends JpaRepository<Lending, Integer> {
     @Query("""
@@ -29,4 +30,14 @@ public interface LendingRepository extends JpaRepository<Lending, Integer> {
     List<Lending> findByReturningdateIsNull();
 
     List<Lending> findByBook(String book);
+
+    @Query("""
+    SELECT l
+    FROM Lending l
+    WHERE l.book = :isbn
+    AND l.borrower = :borrower
+    AND l.returningdate IS NULL
+""")
+    Optional<Lending> findByBorrowerAndBook(@Param("borrower") String userId, @Param("isbn") String isbn);
+
 }

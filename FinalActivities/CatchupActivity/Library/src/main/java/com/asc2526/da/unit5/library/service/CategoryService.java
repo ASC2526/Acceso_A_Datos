@@ -26,9 +26,8 @@ public class CategoryService {
     }
 
     public Category createCategory(Category category) {
-        if (category == null) {
-            throw new IllegalArgumentException("Category cannot be null");
-        }
+        if (category.getCode() == null || category.getCode().isBlank())
+            throw new IllegalArgumentException("Category code is required");
         return categoryRepository.save(category);
     }
 

@@ -1,6 +1,8 @@
 package com.asc2526.da.unit5.library.model;
 
 import jakarta.persistence.*;
+import jakarta.validation.constraints.NotNull;
+
 import java.time.LocalDate;
 
 @Entity
@@ -11,15 +13,18 @@ public class Lending {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
 
+    @NotNull
     @Column(name = "lendingdate", nullable = false)
     private LocalDate lendingdate;
 
     @Column(name = "returningdate")
     private LocalDate returningdate;
 
+    @NotNull
     @Column(name = "book", nullable = false)
     private String book; // ISBN
 
+    @NotNull
     @Column(name = "borrower", nullable = false)
     private String borrower; // user code
 

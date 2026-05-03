@@ -1,5 +1,6 @@
 package com.asc2526.da.unit5.library.service;
 
+import com.asc2526.da.unit5.library.exception.BookAlreadyExistsException;
 import com.asc2526.da.unit5.library.exception.BookNotFoundException;
 import com.asc2526.da.unit5.library.exception.CategoryNotFoundException;
 import com.asc2526.da.unit5.library.model.Book;
@@ -44,7 +45,8 @@ public class BookService {
         for (Book book : books)
         {
             int activeBooks = lendingRepository.countActiveLendingsByBook(book.getIsbn());
-            int available = book.getCopies() - activeBooks;
+            int copies = book.getCopies() != null ? book.getCopies() : 0;
+            int available = copies - activeBooks;
 
             if (available > 0)
             {
@@ -65,5 +67,33 @@ public class BookService {
                 .orElseThrow(() -> new CategoryNotFoundException(category));
 
         return bookRepository.findByCategory(category);
+    }
+
+    public Book createBook(Book book) {
+
+        if (book == null) {
+            throw new IllegalArgumentException("Book cannot be null");
+        }
+
+        if (book.getIsbn() == null || book.getIsbn().isBlank()) {
+            throw new IllegalArgumentException("ISBN cannot be null or empty");
+        }
+
+        if (book.getTitle() == null || book.getTitle().isBlank()) {
+            throw new IllegalArgumentException("Title cannot be null or empty");
+        }
+
+        if (book.getCategory() == null || book.getCategory().isBlank()) {
+            throw new IllegalArgumentException("Category cannot be null or empty");
+        }
+
+        if (bookRepository.existsById(book.getIsbn())) {
+            throw new BookAlreadyExistsException(book.getIsbn());
+        }
+
+        categoryRepository.findById(book.getCategory())
+                .orElseThrow(() -> new CategoryNotFoundException(book.getCategory()));
+
+        return bookRepository.save(book);
     }
 }

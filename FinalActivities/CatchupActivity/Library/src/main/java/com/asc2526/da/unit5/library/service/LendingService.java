@@ -42,6 +42,9 @@ public class LendingService {
         String isbn = lending.getBook();
         String userId = lending.getBorrower();
 
+        if (isbn == null || isbn.isBlank() || userId == null || userId.isBlank())
+            throw new IllegalArgumentException("Book and borrower are required");
+
         Book book = bookRepository.findById(isbn)
                 .orElseThrow(() -> new BookNotFoundException(isbn));
         User user = userRepository.findById(userId)
@@ -57,18 +60,19 @@ public class LendingService {
             throw new MaxBooksExceededException(userId);
         }
 
-        int numCopies = book.getCopies();
+        int activeLendings = lendingRepository.countActiveLendingsByBook(isbn);
+        int available = book.getCopies() - activeLendings;
 
-        if (numCopies < 1) {
+        if (available <= 0) {
             throw new BookNotAvailableException(isbn);
         }
 
-        Optional<Reservation> reservOpt = reservationRepository
+        Optional<Reservation> reserveOpt = reservationRepository
                 .findOldestActiveReservation(isbn);
 
-        if (reservOpt.isPresent())
+        if (reserveOpt.isPresent())
         {
-            Reservation r = reservOpt.get();
+            Reservation r = reserveOpt.get();
 
             if (Objects.equals(r.getBorrower(), userId))
             {
@@ -78,7 +82,7 @@ public class LendingService {
 
                 Lending saved = lendingRepository.save(lending);
 
-                r.setLending(lending.getId());
+                r.setLending(saved.getId());
                 reservationRepository.save(r);
 
                 return saved;
@@ -87,10 +91,8 @@ public class LendingService {
                 throw new BookAlreadyReservedException(isbn);
             }
         }
-
         lending.setLendingdate(LocalDate.now());
         lending.setReturningdate(null);
-
         return lendingRepository.save(lending);
     }
 
@@ -117,5 +119,38 @@ public class LendingService {
                 .orElseThrow(() -> new BookNotFoundException(isbn));
 
         return lendingRepository.findByBook(isbn);
+    }
+
+    public Lending returnBook(String isbn, String userId)
+    {
+        bookRepository.findById(isbn)
+                .orElseThrow(() -> new BookNotFoundException(isbn));
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new UserNotFoundException(userId));
+
+        Optional<Lending> activeLending = lendingRepository
+                .findByBorrowerAndBook(userId, isbn);
+
+        if(activeLending.isEmpty())
+            throw new LendingNotActiveException(isbn, userId);
+
+        Lending lending = activeLending.get();
+        lending.setReturningdate(LocalDate.now());
+
+        LocalDate lendingDate = lending.getLendingdate();
+        LocalDate limitDate = lendingDate.plusDays(7);
+
+        if (LocalDate.now().isAfter(limitDate)) {
+            user.setFined(LocalDate.now().plusDays(15));
+            userRepository.save(user);
+        }
+
+        Optional<Reservation> reserveOpt = reservationRepository
+                .findOldestActiveReservation(isbn);
+
+        if (reserveOpt.isEmpty())
+            System.out.println("The book has been returned and there isn´t any active reservation for this book: " + isbn + ".");
+
+        return lendingRepository.save(lending);
     }
 }

@@ -1,29 +1,41 @@
 package com.asc2526.da.unit5.library.model;
 
 import jakarta.persistence.*;
+import jakarta.validation.constraints.Min;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.Size;
 import org.hibernate.annotations.ColumnDefault;
 
 @Entity
 @Table(name = "books")
 public class Book {
 
+    @NotBlank
+    @Size(max = 13)
     @Id
     @Column(name = "isbn", nullable = false, length = 13)
     private String isbn;
 
+    @NotBlank
+    @Size(max = 90)
     @Column(name = "title", nullable = false, length = 90)
     private String title;
 
+    @Min(0)
     @ColumnDefault("1")
     @Column(name = "copies")
     private Integer copies;
 
+    @Size(max = 255)
     @Column(name = "outline")
     private String outline;
 
+    @Size(max = 60)
     @Column(name = "publisher", length = 60)
     private String publisher;
 
+    @NotBlank
+    @Size(max = 8)
     @Column(name = "category", nullable = false)
     private String category;
 

@@ -2,6 +2,7 @@ package com.asc2526.da.unit5.library.controller;
 
 import com.asc2526.da.unit5.library.model.Lending;
 import com.asc2526.da.unit5.library.service.LendingService;
+import jakarta.validation.Valid;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -27,7 +28,7 @@ public class LendingController {
     }
 
     @PostMapping
-    public Lending lendBook(@RequestBody Lending lending) {
+    public Lending lendBook(@Valid @RequestBody Lending lending) {
         return lendingService.lendBook(lending);
     }
 
@@ -39,5 +40,13 @@ public class LendingController {
     @GetMapping("/book/{isbn}")
     public List<Lending> getLendingsByBook(@PathVariable String isbn) {
         return lendingService.getLendingsByBook(isbn);
+    }
+
+    @PutMapping("/return")
+    public Lending returnBook(
+            @RequestParam String isbn,
+            @RequestParam String userId) {
+
+        return lendingService.returnBook(isbn, userId);
     }
 }

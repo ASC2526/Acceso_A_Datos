@@ -20,4 +20,12 @@ public interface ReservationRepository extends JpaRepository<Reservation, Intege
     List<Reservation> findByBook(String book);
 
     List<Reservation> findByBorrower(String borrower);
+
+    @Query("""
+       SELECT r FROM Reservation r
+       WHERE r.book = :book
+       AND r.borrower = :borrower
+       AND r.lending IS NULL
+       """)
+    Optional<Reservation> findReservationByBookAndBorrowerAndLendingNull(@Param("book") String book, @Param("borrower") String borrower);
 }

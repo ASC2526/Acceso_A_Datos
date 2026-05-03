@@ -2,10 +2,7 @@ package com.asc2526.da.unit5.library.controller;
 
 import com.asc2526.da.unit5.library.model.Reservation;
 import com.asc2526.da.unit5.library.service.ReservationService;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
@@ -23,13 +20,21 @@ public class ReservationController {
         return reservationService.getAllReservations();
     }
 
-    @GetMapping("/reservations/book/{isbn}")
+    @GetMapping("/book/{isbn}")
     public List<Reservation> getReservationsByBook(@PathVariable String isbn) {
         return reservationService.getReservationsByBook(isbn);
     }
 
-    @GetMapping("/reservations/user/{userId}")
+    @GetMapping("/user/{userId}")
     public List<Reservation> getReservationsByUser(@PathVariable String userId) {
         return reservationService.getReservationsByUser(userId);
+    }
+
+    @PostMapping
+    public Reservation createReservation(
+            @RequestParam String userId,
+            @RequestParam String isbn) {
+
+        return reservationService.createReservation(userId, isbn);
     }
 }

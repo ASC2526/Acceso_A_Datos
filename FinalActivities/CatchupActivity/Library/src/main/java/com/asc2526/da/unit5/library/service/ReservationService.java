@@ -1,14 +1,21 @@
 package com.asc2526.da.unit5.library.service;
 
+import com.asc2526.da.unit5.library.exception.BookAlreadyLendByUserException;
 import com.asc2526.da.unit5.library.exception.BookNotFoundException;
+import com.asc2526.da.unit5.library.exception.ReservationAlreadyExistsException;
 import com.asc2526.da.unit5.library.exception.UserNotFoundException;
+import com.asc2526.da.unit5.library.model.Lending;
 import com.asc2526.da.unit5.library.model.Reservation;
+import com.asc2526.da.unit5.library.model.User;
 import com.asc2526.da.unit5.library.repository.BookRepository;
+import com.asc2526.da.unit5.library.repository.LendingRepository;
 import com.asc2526.da.unit5.library.repository.ReservationRepository;
 import com.asc2526.da.unit5.library.repository.UserRepository;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDate;
 import java.util.List;
+import java.util.Optional;
 
 @Service
 public class ReservationService {
@@ -16,11 +23,13 @@ public class ReservationService {
     private final ReservationRepository reservationRepository;
     private final BookRepository bookRepository;
     private final UserRepository userRepository;
+    private final LendingRepository lendingRepository;
 
-    public ReservationService(ReservationRepository reservationRepository, BookRepository bookRepository, UserRepository userRepository) {
+    public ReservationService(ReservationRepository reservationRepository, BookRepository bookRepository, UserRepository userRepository, LendingRepository lendingRepository) {
         this.reservationRepository = reservationRepository;
         this.bookRepository = bookRepository;
         this.userRepository = userRepository;
+        this.lendingRepository = lendingRepository;
     }
 
     public List<Reservation> getAllReservations() {
@@ -49,5 +58,44 @@ public class ReservationService {
                 .orElseThrow(() -> new UserNotFoundException(userId));
 
         return reservationRepository.findByBorrower(userId);
+    }
+
+    public Reservation createReservation(String userId, String isbn) {
+
+        if (userId == null || userId.isBlank()) {
+            throw new IllegalArgumentException("UserId cannot be null or empty");
+        }
+
+        if (isbn == null || isbn.isBlank()) {
+            throw new IllegalArgumentException("ISBN cannot be null or empty");
+        }
+
+        bookRepository.findById(isbn)
+                .orElseThrow(() -> new BookNotFoundException(isbn));
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new UserNotFoundException(userId));
+
+        if (user.getPhone() == null && user.getEmail() == null)
+            throw new IllegalArgumentException("The user must have an email or phone number to reserve a book");
+
+        Optional<Reservation> optReserve = reservationRepository
+                .findReservationByBookAndBorrowerAndLendingNull(isbn, userId);
+
+        if (optReserve.isPresent())
+            throw new ReservationAlreadyExistsException(isbn, userId);
+
+        Optional<Lending> alreadyLend = lendingRepository
+                .findByBorrowerAndBook(userId, isbn);
+
+        if (alreadyLend.isPresent())
+            throw new BookAlreadyLendByUserException(userId, isbn);
+
+        Reservation reservation = new Reservation();
+        reservation.setBook(isbn);
+        reservation.setBorrower(userId);
+        reservation.setDate(LocalDate.now());
+        reservation.setLending(null);
+
+        return reservationRepository.save(reservation);
     }
 }

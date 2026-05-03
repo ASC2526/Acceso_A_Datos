@@ -1,6 +1,8 @@
 package com.asc2526.da.unit5.library.model;
 
 import jakarta.persistence.*;
+import jakarta.validation.constraints.NotNull;
+
 import java.time.LocalDate;
 
 @Entity
@@ -11,12 +13,15 @@ public class Reservation {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
 
+    @NotNull
     @Column(name = "date", nullable = false)
     private LocalDate date;
 
+    @NotNull
     @Column(name = "book", nullable = false)
     private String book;
 
+    @NotNull
     @Column(name = "borrower", nullable = false)
     private String borrower;
 

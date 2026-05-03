@@ -2,10 +2,8 @@ package com.asc2526.da.unit5.library.controller;
 
 import com.asc2526.da.unit5.library.model.Book;
 import com.asc2526.da.unit5.library.service.BookService;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import jakarta.validation.Valid;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
@@ -34,5 +32,9 @@ public class BookController {
         return bookService.getBooksByCategory(category);
     }
 
+    @PostMapping
+    public Book createBook(@Valid @RequestBody Book book) {
+        return bookService.createBook(book);
+    }
 
 }

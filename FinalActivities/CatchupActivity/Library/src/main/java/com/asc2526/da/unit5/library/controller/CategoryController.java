@@ -2,6 +2,7 @@ package com.asc2526.da.unit5.library.controller;
 
 import com.asc2526.da.unit5.library.model.Category;
 import com.asc2526.da.unit5.library.service.CategoryService;
+import jakarta.validation.Valid;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -27,7 +28,7 @@ public class CategoryController {
     }
 
     @PostMapping
-    public Category createCategory(@RequestBody Category category) {
+    public Category createCategory(@Valid @RequestBody Category category) {
         return categoryService.createCategory(category);
     }
 

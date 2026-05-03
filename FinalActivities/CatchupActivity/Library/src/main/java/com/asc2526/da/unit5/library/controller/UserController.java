@@ -2,6 +2,7 @@ package com.asc2526.da.unit5.library.controller;
 
 import com.asc2526.da.unit5.library.model.User;
 import com.asc2526.da.unit5.library.service.UserService;
+import jakarta.validation.Valid;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -27,7 +28,7 @@ public class UserController {
     }
 
     @PostMapping
-    public User createUser(@RequestBody User user) {
+    public User createUser(@Valid @RequestBody User user) {
         return userService.createUser(user);
     }
 

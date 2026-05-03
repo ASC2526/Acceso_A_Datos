@@ -26,9 +26,8 @@ public class UserService {
     }
 
     public User createUser(User user) {
-        if (user == null) {
-            throw new IllegalArgumentException("User cannot be null");
-        }
+        if (user.getCode() == null || user.getCode().isBlank())
+            throw new IllegalArgumentException("User code is required");
         return userRepository.save(user);
     }
 

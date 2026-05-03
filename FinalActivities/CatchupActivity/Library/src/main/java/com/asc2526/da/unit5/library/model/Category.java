@@ -1,15 +1,21 @@
 package com.asc2526.da.unit5.library.model;
 
 import jakarta.persistence.*;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.Size;
 
 @Entity
 @Table(name = "categories")
 public class Category {
 
+    @NotBlank
+    @Size(max = 8)
     @Id
     @Column(name = "code", nullable = false, length = 8)
     private String code;
 
+    @NotBlank
+    @Size(max = 60)
     @Column(name = "name", nullable = false, length = 60)
     private String name;
 

@@ -40,6 +40,16 @@ public class GlobalExceptionHandler {
                 ));
     }
 
+    @ExceptionHandler(LendingNotActiveException.class)
+    public ResponseEntity<ApiError> handleLendingNotActive(LendingNotActiveException ex) {
+        return ResponseEntity
+                .status(HttpStatus.NOT_FOUND)
+                .body(new ApiError(
+                        HttpStatus.NOT_FOUND.value(),
+                        ex.getMessage()
+                ));
+    }
+
     // 409 conflict
 
     @ExceptionHandler(MaxBooksExceededException.class)
@@ -74,6 +84,26 @@ public class GlobalExceptionHandler {
 
     @ExceptionHandler(UserFinedException.class)
     public ResponseEntity<ApiError> handleUserFined(UserFinedException ex) {
+        return ResponseEntity
+                .status(HttpStatus.CONFLICT)
+                .body(new ApiError(
+                        HttpStatus.CONFLICT.value(),
+                        ex.getMessage()
+                ));
+    }
+
+    @ExceptionHandler(ReservationAlreadyExistsException.class)
+    public ResponseEntity<ApiError> handleReservationAlreadyExists(ReservationAlreadyExistsException ex) {
+        return ResponseEntity
+                .status(HttpStatus.CONFLICT)
+                .body(new ApiError(
+                        HttpStatus.CONFLICT.value(),
+                        ex.getMessage()
+                ));
+    }
+
+    @ExceptionHandler(BookAlreadyLendByUserException.class)
+    public ResponseEntity<ApiError> handleBookAlreadyLend(BookAlreadyLendByUserException ex) {
         return ResponseEntity
                 .status(HttpStatus.CONFLICT)
                 .body(new ApiError(
