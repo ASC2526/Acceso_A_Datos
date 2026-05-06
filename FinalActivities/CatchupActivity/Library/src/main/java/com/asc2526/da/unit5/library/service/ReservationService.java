@@ -4,6 +4,7 @@ import com.asc2526.da.unit5.library.exception.BookAlreadyLendByUserException;
 import com.asc2526.da.unit5.library.exception.BookNotFoundException;
 import com.asc2526.da.unit5.library.exception.ReservationAlreadyExistsException;
 import com.asc2526.da.unit5.library.exception.UserNotFoundException;
+import com.asc2526.da.unit5.library.model.Book;
 import com.asc2526.da.unit5.library.model.Lending;
 import com.asc2526.da.unit5.library.model.Reservation;
 import com.asc2526.da.unit5.library.model.User;
@@ -42,10 +43,10 @@ public class ReservationService {
             throw new IllegalArgumentException("ISBN cannot be null or empty");
         }
 
-        bookRepository.findById(isbn)
+        Book book = bookRepository.findById(isbn)
                 .orElseThrow(() -> new BookNotFoundException(isbn));
 
-        return reservationRepository.findByBook(isbn);
+        return reservationRepository.findByBook(book);
     }
 
     public List<Reservation> getReservationsByUser(String userId) {
@@ -54,10 +55,10 @@ public class ReservationService {
             throw new IllegalArgumentException("UserId cannot be null or empty");
         }
 
-        userRepository.findById(userId)
+        User user = userRepository.findById(userId)
                 .orElseThrow(() -> new UserNotFoundException(userId));
 
-        return reservationRepository.findByBorrower(userId);
+        return reservationRepository.findByBorrower(user);
     }
 
     public Reservation createReservation(String userId, String isbn) {
@@ -70,13 +71,24 @@ public class ReservationService {
             throw new IllegalArgumentException("ISBN cannot be null or empty");
         }
 
-        bookRepository.findById(isbn)
+        Book book = bookRepository.findById(isbn)
                 .orElseThrow(() -> new BookNotFoundException(isbn));
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new UserNotFoundException(userId));
 
-        if (user.getPhone() == null && user.getEmail() == null)
-            throw new IllegalArgumentException("The user must have an email or phone number to reserve a book");
+        if ((user.getEmail() == null || user.getEmail().isBlank()) &&
+                (user.getPhone() == null || user.getPhone().isBlank())) {
+            throw new IllegalArgumentException("User must have email or phone to make a reservation.");
+        }
+
+        int activeLendings = lendingRepository.countActiveLendingsByBook(isbn);
+        int available = book.getCopies() - activeLendings;
+
+        if (available > 0) {
+            throw new IllegalArgumentException(
+                    "The book is available and cannot be reserved"
+            );
+        }
 
         Optional<Reservation> optReserve = reservationRepository
                 .findReservationByBookAndBorrowerAndLendingNull(isbn, userId);
@@ -91,8 +103,8 @@ public class ReservationService {
             throw new BookAlreadyLendByUserException(userId, isbn);
 
         Reservation reservation = new Reservation();
-        reservation.setBook(isbn);
-        reservation.setBorrower(userId);
+        reservation.setBook(book);
+        reservation.setBorrower(user);
         reservation.setDate(LocalDate.now());
         reservation.setLending(null);
 

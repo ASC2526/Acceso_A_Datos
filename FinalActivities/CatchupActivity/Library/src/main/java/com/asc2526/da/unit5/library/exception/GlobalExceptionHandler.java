@@ -112,6 +112,20 @@ public class GlobalExceptionHandler {
                 ));
     }
 
+    @ExceptionHandler(UserAlreadyExistsException.class)
+    public ResponseEntity<ApiError> handleUserAlreadyExists(UserAlreadyExistsException ex) {
+        return ResponseEntity
+                .status(HttpStatus.CONFLICT)
+                .body(new ApiError(HttpStatus.CONFLICT.value(), ex.getMessage()));
+    }
+
+    @ExceptionHandler(BookAlreadyExistsException.class)
+    public ResponseEntity<ApiError> handleBookAlreadyExists(BookAlreadyExistsException ex) {
+        return ResponseEntity
+                .status(HttpStatus.CONFLICT)
+                .body(new ApiError(HttpStatus.CONFLICT.value(), ex.getMessage()));
+    }
+
     // 400 bad request
 
     @ExceptionHandler(IllegalArgumentException.class)
@@ -135,4 +149,5 @@ public class GlobalExceptionHandler {
                         "Unexpected error"
                 ));
     }
+
 }

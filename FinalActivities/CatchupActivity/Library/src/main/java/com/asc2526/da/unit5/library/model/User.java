@@ -12,9 +12,9 @@ import java.time.LocalDate;
 @Table(name = "users")
 public class User {
 
+    @Id
     @NotBlank
     @Size(max = 8)
-    @Id
     @Column(name = "code", nullable = false, length = 8)
     private String code;
 

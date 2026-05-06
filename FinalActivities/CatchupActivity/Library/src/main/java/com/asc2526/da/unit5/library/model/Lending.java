@@ -1,7 +1,6 @@
 package com.asc2526.da.unit5.library.model;
 
 import jakarta.persistence.*;
-import jakarta.validation.constraints.NotNull;
 
 import java.time.LocalDate;
 
@@ -13,35 +12,34 @@ public class Lending {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
 
-    @NotNull
     @Column(name = "lendingdate", nullable = false)
-    private LocalDate lendingdate;
+    private LocalDate lendingDate;
 
     @Column(name = "returningdate")
-    private LocalDate returningdate;
+    private LocalDate returningDate;
 
-    @NotNull
-    @Column(name = "book", nullable = false)
-    private String book; // ISBN
+    @ManyToOne
+    @JoinColumn(name = "book", referencedColumnName = "isbn")
+    private Book book;
 
-    @NotNull
-    @Column(name = "borrower", nullable = false)
-    private String borrower; // user code
+    @ManyToOne
+    @JoinColumn(name = "borrower", referencedColumnName = "code")
+    private User borrower;
 
     public Lending() {}
 
     public Integer getId() { return id; }
     public void setId(Integer id) { this.id = id; }
 
-    public LocalDate getLendingdate() { return lendingdate; }
-    public void setLendingdate(LocalDate lendingdate) { this.lendingdate = lendingdate; }
+    public LocalDate getLendingDate() { return lendingDate; }
+    public void setLendingDate(LocalDate lendingdate) { this.lendingDate = lendingdate; }
 
-    public LocalDate getReturningdate() { return returningdate; }
-    public void setReturningdate(LocalDate returningdate) { this.returningdate = returningdate; }
+    public LocalDate getReturningDate() { return returningDate; }
+    public void setReturningDate(LocalDate returningdate) { this.returningDate = returningdate; }
 
-    public String getBook() { return book; }
-    public void setBook(String book) { this.book = book; }
+    public Book getBook() { return book; }
+    public void setBook(Book book) { this.book = book; }
 
-    public String getBorrower() { return borrower; }
-    public void setBorrower(String borrower) { this.borrower = borrower; }
+    public User getBorrower() { return borrower; }
+    public void setBorrower(User borrower) { this.borrower = borrower; }
 }

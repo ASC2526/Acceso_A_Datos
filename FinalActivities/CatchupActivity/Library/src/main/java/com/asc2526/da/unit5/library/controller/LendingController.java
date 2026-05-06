@@ -1,8 +1,11 @@
 package com.asc2526.da.unit5.library.controller;
 
+import com.asc2526.da.unit5.library.dto.ReturnResponseDTO;
 import com.asc2526.da.unit5.library.model.Lending;
 import com.asc2526.da.unit5.library.service.LendingService;
 import jakarta.validation.Valid;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -18,35 +21,37 @@ public class LendingController {
     }
 
     @GetMapping
-    public List<Lending> getAllLendings() {
-        return lendingService.getAllLendings();
+    public ResponseEntity<List<Lending>> getAllLendings() {
+        return ResponseEntity.ok(lendingService.getAllLendings());
     }
 
     @GetMapping("/user/{userId}")
-    public List<Lending> getLendingsByUser(@PathVariable String userId) {
-        return lendingService.getLendingsByUser(userId);
+    public ResponseEntity<List<Lending>> getLendingsByUser(@PathVariable String userId) {
+        return ResponseEntity.ok(lendingService.getLendingsByUser(userId));
     }
 
     @PostMapping
-    public Lending lendBook(@Valid @RequestBody Lending lending) {
-        return lendingService.lendBook(lending);
+    public ResponseEntity<Lending> lendBook(@Valid @RequestBody Lending lending) {
+        Lending newLending = lendingService.lendBook(lending);
+        return new ResponseEntity<>(newLending, HttpStatus.CREATED);
     }
 
     @GetMapping("/active")
-    public List<Lending> getActiveLendings() {
-        return lendingService.getActiveLendings();
+    public ResponseEntity<List<Lending>> getActiveLendings() {
+        return ResponseEntity.ok(lendingService.getActiveLendings());
     }
 
     @GetMapping("/book/{isbn}")
-    public List<Lending> getLendingsByBook(@PathVariable String isbn) {
-        return lendingService.getLendingsByBook(isbn);
+    public ResponseEntity<List<Lending>> getLendingsByBook(@PathVariable String isbn) {
+        return ResponseEntity.ok(lendingService.getLendingsByBook(isbn));
     }
 
     @PutMapping("/return")
-    public Lending returnBook(
+    public ResponseEntity<ReturnResponseDTO> returnBook(
             @RequestParam String isbn,
             @RequestParam String userId) {
 
-        return lendingService.returnBook(isbn, userId);
+        ReturnResponseDTO response = lendingService.returnBook(isbn, userId);
+        return ResponseEntity.ok(response);
     }
 }

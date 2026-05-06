@@ -1,6 +1,8 @@
 package com.asc2526.da.unit5.library.repository;
 
+import com.asc2526.da.unit5.library.model.Book;
 import com.asc2526.da.unit5.library.model.Reservation;
+import com.asc2526.da.unit5.library.model.User;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
@@ -17,9 +19,9 @@ public interface ReservationRepository extends JpaRepository<Reservation, Intege
        """)
     Optional<Reservation> findOldestActiveReservation(@Param("book") String book);
 
-    List<Reservation> findByBook(String book);
+    List<Reservation> findByBook(Book book);
 
-    List<Reservation> findByBorrower(String borrower);
+    List<Reservation> findByBorrower(User borrower);
 
     @Query("""
        SELECT r FROM Reservation r

@@ -3,26 +3,26 @@ package com.asc2526.da.unit5.library.model;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
-import org.hibernate.annotations.ColumnDefault;
 
 @Entity
 @Table(name = "books")
 public class Book {
 
-    @NotBlank
-    @Size(max = 13)
     @Id
+    @NotBlank(message = "The ISBN is required")
+    @Size(max = 13)
     @Column(name = "isbn", nullable = false, length = 13)
     private String isbn;
 
-    @NotBlank
+    @NotBlank(message = "The title is required")
     @Size(max = 90)
     @Column(name = "title", nullable = false, length = 90)
     private String title;
 
-    @Min(0)
-    @ColumnDefault("1")
+    @NotNull(message = "The number of copies cannot be null")
+    @Min(value = 0, message = "The copies cannot be negative")
     @Column(name = "copies")
     private Integer copies;
 
@@ -34,10 +34,10 @@ public class Book {
     @Column(name = "publisher", length = 60)
     private String publisher;
 
-    @NotBlank
-    @Size(max = 8)
-    @Column(name = "category", nullable = false)
-    private String category;
+    @NotNull(message = "The category is required")
+    @ManyToOne
+    @JoinColumn(name = "category", nullable = false)
+    private Category category;
 
     public Book() {}
 
@@ -56,6 +56,6 @@ public class Book {
     public String getPublisher() { return publisher; }
     public void setPublisher(String publisher) { this.publisher = publisher; }
 
-    public String getCategory() { return category; }
-    public void setCategory(String category) { this.category = category; }
+    public Category getCategory() { return category; }
+    public void setCategory(Category categoryObject) { this.category = categoryObject; }
 }

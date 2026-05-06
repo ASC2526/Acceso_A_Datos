@@ -2,6 +2,8 @@ package com.asc2526.da.unit5.library.controller;
 
 import com.asc2526.da.unit5.library.model.Reservation;
 import com.asc2526.da.unit5.library.service.ReservationService;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -16,25 +18,26 @@ public class ReservationController {
     }
 
     @GetMapping
-    public List<Reservation> getAllReservations() {
-        return reservationService.getAllReservations();
+    public ResponseEntity<List<Reservation>> getAllReservations() {
+        return ResponseEntity.ok(reservationService.getAllReservations());
     }
 
     @GetMapping("/book/{isbn}")
-    public List<Reservation> getReservationsByBook(@PathVariable String isbn) {
-        return reservationService.getReservationsByBook(isbn);
+    public ResponseEntity<List<Reservation>> getReservationsByBook(@PathVariable String isbn) {
+        return ResponseEntity.ok(reservationService.getReservationsByBook(isbn));
     }
 
     @GetMapping("/user/{userId}")
-    public List<Reservation> getReservationsByUser(@PathVariable String userId) {
-        return reservationService.getReservationsByUser(userId);
+    public ResponseEntity<List<Reservation>> getReservationsByUser(@PathVariable String userId) {
+        return ResponseEntity.ok(reservationService.getReservationsByUser(userId));
     }
 
     @PostMapping
-    public Reservation createReservation(
+    public ResponseEntity<Reservation> createReservation(
             @RequestParam String userId,
             @RequestParam String isbn) {
 
-        return reservationService.createReservation(userId, isbn);
+        Reservation reservation = reservationService.createReservation(userId, isbn);
+        return new ResponseEntity<>(reservation, HttpStatus.CREATED);
     }
 }

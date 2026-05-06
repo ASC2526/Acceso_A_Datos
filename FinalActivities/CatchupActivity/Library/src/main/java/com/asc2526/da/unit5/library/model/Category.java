@@ -8,13 +8,13 @@ import jakarta.validation.constraints.Size;
 @Table(name = "categories")
 public class Category {
 
-    @NotBlank
-    @Size(max = 8)
     @Id
+    @NotBlank(message = "The code is required")
+    @Size(max = 8)
     @Column(name = "code", nullable = false, length = 8)
     private String code;
 
-    @NotBlank
+    @NotBlank(message = "The name is required")
     @Size(max = 60)
     @Column(name = "name", nullable = false, length = 60)
     private String name;

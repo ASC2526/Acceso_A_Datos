@@ -4,25 +4,22 @@ import com.asc2526.da.unit5.library.exception.BookAlreadyExistsException;
 import com.asc2526.da.unit5.library.exception.BookNotFoundException;
 import com.asc2526.da.unit5.library.exception.CategoryNotFoundException;
 import com.asc2526.da.unit5.library.model.Book;
+import com.asc2526.da.unit5.library.model.Category;
 import com.asc2526.da.unit5.library.repository.BookRepository;
 import com.asc2526.da.unit5.library.repository.CategoryRepository;
-import com.asc2526.da.unit5.library.repository.LendingRepository;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
 import java.util.List;
 
 @Service
 public class BookService {
 
     private final BookRepository bookRepository;
-    private final LendingRepository lendingRepository;
     private final CategoryRepository categoryRepository;
 
 
-    public BookService(BookRepository bookRepository, LendingRepository lendingRepository, CategoryRepository categoryRepository) {
+    public BookService(BookRepository bookRepository, CategoryRepository categoryRepository) {
         this.bookRepository = bookRepository;
-        this.lendingRepository = lendingRepository;
         this.categoryRepository = categoryRepository;
     }
 
@@ -39,32 +36,17 @@ public class BookService {
 
     public List<Book> getAvailableBooks() {
 
-        List<Book> books = bookRepository.findAll();
-        List<Book> availableBooks = new ArrayList<>();
-
-        for (Book book : books)
-        {
-            int activeBooks = lendingRepository.countActiveLendingsByBook(book.getIsbn());
-            int copies = book.getCopies() != null ? book.getCopies() : 0;
-            int available = copies - activeBooks;
-
-            if (available > 0)
-            {
-                availableBooks.add(book);
-            }
-        }
-
-        return availableBooks;
+        return bookRepository.findByCopiesGreaterThan(0);
     }
 
-    public List<Book> getBooksByCategory(String category) {
+    public List<Book> getBooksByCategory(String categoryCode) {
 
-        if (category == null || category.isBlank()) {
+        if (categoryCode == null || categoryCode.isBlank()) {
             throw new IllegalArgumentException("Category cannot be null or empty");
         }
 
-        categoryRepository.findById(category)
-                .orElseThrow(() -> new CategoryNotFoundException(category));
+        Category category = categoryRepository.findById(categoryCode)
+                .orElseThrow(() -> new CategoryNotFoundException(categoryCode));
 
         return bookRepository.findByCategory(category);
     }
@@ -83,16 +65,17 @@ public class BookService {
             throw new IllegalArgumentException("Title cannot be null or empty");
         }
 
-        if (book.getCategory() == null || book.getCategory().isBlank()) {
-            throw new IllegalArgumentException("Category cannot be null or empty");
+        if (book.getCategory() == null || book.getCategory().getCode() == null || book.getCategory().getCode().isBlank()) {
+            throw new IllegalArgumentException("Category code cannot be null or empty");
         }
 
         if (bookRepository.existsById(book.getIsbn())) {
             throw new BookAlreadyExistsException(book.getIsbn());
         }
 
-        categoryRepository.findById(book.getCategory())
-                .orElseThrow(() -> new CategoryNotFoundException(book.getCategory()));
+        String categoryCode = book.getCategory().getCode();
+        categoryRepository.findById(categoryCode)
+                .orElseThrow(() -> new CategoryNotFoundException(categoryCode));
 
         return bookRepository.save(book);
     }

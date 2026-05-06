@@ -1,8 +1,6 @@
 package com.asc2526.da.unit5.library.model;
 
 import jakarta.persistence.*;
-import jakarta.validation.constraints.NotNull;
-
 import java.time.LocalDate;
 
 @Entity
@@ -13,20 +11,20 @@ public class Reservation {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
 
-    @NotNull
     @Column(name = "date", nullable = false)
     private LocalDate date;
 
-    @NotNull
-    @Column(name = "book", nullable = false)
-    private String book;
+    @ManyToOne
+    @JoinColumn(name = "book", referencedColumnName = "isbn")
+    private Book book;
 
-    @NotNull
-    @Column(name = "borrower", nullable = false)
-    private String borrower;
+    @ManyToOne
+    @JoinColumn(name = "borrower", referencedColumnName = "code")
+    private User borrower;
 
-    @Column(name = "lending")
-    private Integer lending;
+    @ManyToOne
+    @JoinColumn(name = "lending")
+    private Lending lending;
 
     public Reservation() {}
 
@@ -36,12 +34,12 @@ public class Reservation {
     public LocalDate getDate() { return date; }
     public void setDate(LocalDate date) { this.date = date; }
 
-    public String getBook() { return book; }
-    public void setBook(String book) { this.book = book; }
+    public Book getBook() { return book; }
+    public void setBook(Book book) { this.book = book; }
 
-    public String getBorrower() { return borrower; }
-    public void setBorrower(String borrower) { this.borrower = borrower; }
+    public User getBorrower() { return borrower; }
+    public void setBorrower(User borrower) { this.borrower = borrower; }
 
-    public Integer getLending() { return lending; }
-    public void setLending(Integer lending) { this.lending = lending; }
+    public Lending getLending() { return lending; }
+    public void setLending(Lending lending) { this.lending = lending; }
 }

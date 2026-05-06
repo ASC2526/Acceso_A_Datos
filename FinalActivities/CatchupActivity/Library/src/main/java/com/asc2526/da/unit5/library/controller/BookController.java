@@ -3,6 +3,8 @@ package com.asc2526.da.unit5.library.controller;
 import com.asc2526.da.unit5.library.model.Book;
 import com.asc2526.da.unit5.library.service.BookService;
 import jakarta.validation.Valid;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -17,24 +19,29 @@ public class BookController {
     }
 
     @GetMapping
-    public List<Book> getAllBooks() { return bookService.getAll(); }
-
-    @GetMapping("/{isbn}")
-    public Book getBookByIsbn(@PathVariable String isbn) { return bookService.findById(isbn); }
-
-    @GetMapping("/available")
-    public List<Book> getAvailableBooks() {
-        return bookService.getAvailableBooks();
+    public ResponseEntity<List<Book>> getAllBooks() {
+        return ResponseEntity.ok(bookService.getAll());
     }
 
-    @GetMapping("/category/{category}")
-    public List<Book> getBooksByCategory(@PathVariable String category) {
-        return bookService.getBooksByCategory(category);
+    @GetMapping("/{isbn}")
+    public ResponseEntity<Book> getBookByIsbn(@PathVariable String isbn) {
+        return ResponseEntity.ok(bookService.findById(isbn));
+    }
+
+    @GetMapping("/available")
+    public ResponseEntity<List<Book>> getAvailableBooks() {
+        return ResponseEntity.ok(bookService.getAvailableBooks());
+    }
+
+    @GetMapping("/filter")
+    public ResponseEntity<List<Book>> getBooksByCategory(@RequestParam String category) {
+        return ResponseEntity.ok(bookService.getBooksByCategory(category));
     }
 
     @PostMapping
-    public Book createBook(@Valid @RequestBody Book book) {
-        return bookService.createBook(book);
+    public ResponseEntity<Book> createBook(@Valid @RequestBody Book book) {
+        Book newBook = bookService.createBook(book);
+        return new ResponseEntity<>(newBook, HttpStatus.CREATED);
     }
 
 }

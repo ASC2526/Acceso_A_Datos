@@ -3,6 +3,8 @@ package com.asc2526.da.unit5.library.controller;
 import com.asc2526.da.unit5.library.model.User;
 import com.asc2526.da.unit5.library.service.UserService;
 import jakarta.validation.Valid;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -18,22 +20,24 @@ public class UserController {
     }
 
     @GetMapping
-    public List<User> getAllUsers() {
-        return userService.getAllUsers();
+    public ResponseEntity<List<User>> getAllUsers() {
+        return ResponseEntity.ok(userService.getAllUsers());
     }
 
     @GetMapping("/{code}")
-    public User getUserById(@PathVariable String code) {
-        return userService.getUserById(code);
+    public ResponseEntity<User> getUserById(@PathVariable String code) {
+        return ResponseEntity.ok(userService.getUserById(code));
     }
 
     @PostMapping
-    public User createUser(@Valid @RequestBody User user) {
-        return userService.createUser(user);
+    public ResponseEntity<User> createUser(@Valid @RequestBody User user) {
+        User newUser = userService.createUser(user);
+        return new ResponseEntity<>(newUser, HttpStatus.CREATED);
     }
 
     @DeleteMapping("/{code}")
-    public void deleteUser(@PathVariable String code) {
+    public ResponseEntity<Void> deleteUser(@PathVariable String code) {
         userService.deleteUser(code);
+        return ResponseEntity.noContent().build();
     }
 }
