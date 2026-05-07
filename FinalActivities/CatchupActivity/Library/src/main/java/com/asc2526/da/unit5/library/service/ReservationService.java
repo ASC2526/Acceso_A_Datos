@@ -81,7 +81,7 @@ public class ReservationService {
             throw new IllegalArgumentException("User must have email or phone to make a reservation.");
         }
 
-        int activeLendings = lendingRepository.countActiveLendingsByBook(isbn);
+        int activeLendings = lendingRepository.countActiveLendingsByBook(book);
         int available = book.getCopies() - activeLendings;
 
         if (available > 0) {
@@ -91,13 +91,13 @@ public class ReservationService {
         }
 
         Optional<Reservation> optReserve = reservationRepository
-                .findReservationByBookAndBorrowerAndLendingNull(isbn, userId);
+                .findReservationByBookAndBorrowerAndLendingNull(book, user);
 
         if (optReserve.isPresent())
             throw new ReservationAlreadyExistsException(isbn, userId);
 
         Optional<Lending> alreadyLend = lendingRepository
-                .findByBorrowerAndBook(userId, isbn);
+                .findByBorrowerAndBook(user, book);
 
         if (alreadyLend.isPresent())
             throw new BookAlreadyLendByUserException(userId, isbn);

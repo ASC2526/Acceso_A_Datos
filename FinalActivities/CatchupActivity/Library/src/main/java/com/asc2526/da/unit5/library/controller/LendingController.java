@@ -47,9 +47,9 @@ public class LendingController {
     }
 
     @PutMapping("/return")
-    public ResponseEntity<ReturnResponseDTO> returnBook(
-            @RequestParam String isbn,
-            @RequestParam String userId) {
+    public ResponseEntity<ReturnResponseDTO> returnBook(@RequestBody Lending returnRequest) {
+        String isbn = returnRequest.getBook().getIsbn();
+        String userId = returnRequest.getBorrower().getCode();
 
         ReturnResponseDTO response = lendingService.returnBook(isbn, userId);
         return ResponseEntity.ok(response);

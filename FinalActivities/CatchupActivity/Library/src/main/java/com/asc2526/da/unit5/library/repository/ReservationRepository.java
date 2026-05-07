@@ -17,7 +17,7 @@ public interface ReservationRepository extends JpaRepository<Reservation, Intege
        AND r.lending IS NULL
        ORDER BY r.date ASC
        """)
-    Optional<Reservation> findOldestActiveReservation(@Param("book") String book);
+    Optional<Reservation> findOldestActiveReservation(@Param("book") Book book);
 
     List<Reservation> findByBook(Book book);
 
@@ -29,5 +29,5 @@ public interface ReservationRepository extends JpaRepository<Reservation, Intege
        AND r.borrower = :borrower
        AND r.lending IS NULL
        """)
-    Optional<Reservation> findReservationByBookAndBorrowerAndLendingNull(@Param("book") String book, @Param("borrower") String borrower);
+    Optional<Reservation> findReservationByBookAndBorrowerAndLendingNull(@Param("book") Book book, @Param("borrower") User borrower);
 }

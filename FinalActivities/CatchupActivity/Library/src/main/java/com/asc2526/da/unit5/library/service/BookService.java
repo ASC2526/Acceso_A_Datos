@@ -74,8 +74,9 @@ public class BookService {
         }
 
         String categoryCode = book.getCategory().getCode();
-        categoryRepository.findById(categoryCode)
+        Category category = categoryRepository.findById(categoryCode)
                 .orElseThrow(() -> new CategoryNotFoundException(categoryCode));
+        book.setCategory(category);
 
         return bookRepository.save(book);
     }

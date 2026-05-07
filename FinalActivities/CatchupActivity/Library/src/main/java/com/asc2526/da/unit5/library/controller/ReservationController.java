@@ -33,9 +33,9 @@ public class ReservationController {
     }
 
     @PostMapping
-    public ResponseEntity<Reservation> createReservation(
-            @RequestParam String userId,
-            @RequestParam String isbn) {
+    public ResponseEntity<Reservation> createReservation(@RequestBody Reservation reservationRequest) {
+        String userId = reservationRequest.getBorrower().getCode();
+        String isbn = reservationRequest.getBook().getIsbn();
 
         Reservation reservation = reservationService.createReservation(userId, isbn);
         return new ResponseEntity<>(reservation, HttpStatus.CREATED);

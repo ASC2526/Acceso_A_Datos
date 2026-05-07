@@ -37,8 +37,9 @@ public class CategoryService {
             throw new IllegalArgumentException("Category code is required");
 
         String categoryCode = category.getCode();
-        categoryRepository.findById(categoryCode)
-                .orElseThrow(() -> new CategoryAlreadyExistsException(categoryCode));
+        if (categoryRepository.existsById(categoryCode)) {
+                throw new CategoryAlreadyExistsException(categoryCode);
+        }
         return categoryRepository.save(category);
     }
 

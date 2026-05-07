@@ -12,4 +12,8 @@ public class ReturnResponseDTO {
         this.message = message;
         this.nextReservationUser = nextReservationUser;
     }
+
+    public Lending getLending() { return lending; }
+    public String getMessage() { return message; }
+    public String getNextReservationUser() { return nextReservationUser; }
 }

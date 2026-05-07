@@ -17,15 +17,15 @@ public interface LendingRepository extends JpaRepository<Lending, Integer> {
        WHERE l.borrower = :borrower
        AND l.returningDate IS NULL
        """)
-    int countActiveLendingsByUser(@Param("borrower") String borrower);
+    int countActiveLendingsByUser(@Param("borrower") User borrower);
 
     @Query("""
     SELECT COUNT(l)
     FROM Lending l
-    WHERE l.book = :isbn
+    WHERE l.book = :book
     AND l.returningDate IS NULL
 """)
-    int countActiveLendingsByBook(@Param("isbn") String isbn);
+    int countActiveLendingsByBook(@Param("book") Book book);
 
     List<Lending> findByBorrower(User borrower);
 
@@ -36,10 +36,10 @@ public interface LendingRepository extends JpaRepository<Lending, Integer> {
     @Query("""
     SELECT l
     FROM Lending l
-    WHERE l.book = :isbn
+    WHERE l.book = :book
     AND l.borrower = :borrower
     AND l.returningDate IS NULL
 """)
-    Optional<Lending> findByBorrowerAndBook(@Param("borrower") String userId, @Param("isbn") String isbn);
+    Optional<Lending> findByBorrowerAndBook(@Param("borrower") User borrower, @Param("book") Book book);
 
 }

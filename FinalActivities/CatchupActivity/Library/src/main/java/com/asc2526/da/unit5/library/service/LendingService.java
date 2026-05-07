@@ -61,13 +61,13 @@ public class LendingService {
         }
 
         // 2 - verify max lendings
-        int count = lendingRepository.countActiveLendingsByUser(userId);
+        int count = lendingRepository.countActiveLendingsByUser(user);
         if (count >= LibraryConstants.MAX_ACTIVE_LENDINGS) {
             throw new MaxBooksExceededException(userId);
         }
 
         // 3 - verify available copies
-        int activeLendings = lendingRepository.countActiveLendingsByBook(isbn);
+        int activeLendings = lendingRepository.countActiveLendingsByBook(book);
         int available = book.getCopies() - activeLendings;
 
         if (available <= 0) {
@@ -76,7 +76,7 @@ public class LendingService {
 
         // 4 - verify reservation
         Optional<Reservation> reserveOpt = reservationRepository
-                .findOldestActiveReservation(isbn);
+                .findOldestActiveReservation(book);
 
         if (reserveOpt.isPresent())
         {
@@ -136,13 +136,13 @@ public class LendingService {
     @Transactional
     public ReturnResponseDTO returnBook(String isbn, String userId)
     {
-        bookRepository.findById(isbn)
+        Book book = bookRepository.findById(isbn)
                 .orElseThrow(() -> new BookNotFoundException(isbn));
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new UserNotFoundException(userId));
 
         Optional<Lending> activeLending = lendingRepository
-                .findByBorrowerAndBook(userId, isbn);
+                .findByBorrowerAndBook(user, book);
 
         if(activeLending.isEmpty())
             throw new LendingNotActiveException(isbn, userId);
@@ -164,15 +164,13 @@ public class LendingService {
         // notify active reservations
         String nextReservationUser = null;
         Optional<Reservation> nextRes = reservationRepository
-                .findOldestActiveReservation(isbn);
+                .findOldestActiveReservation(book);
 
         if (nextRes.isPresent())
         {
             message = "ADVICE: the book returned has a pending reservation.";
-            User resUser = userRepository.findById(nextRes.get().getBorrower().getCode()).orElse(null);
-            if (resUser != null) {
-                nextReservationUser = resUser.getName() + " " + resUser.getSurname() + " (" + resUser.getCode() + ")";
-            }
+            User resUser = nextRes.get().getBorrower();
+            nextReservationUser = resUser.getName() + " " + resUser.getSurname() + " (" + resUser.getCode() + ")";
         }
         Lending saved = lendingRepository.save(lending);
         return new ReturnResponseDTO(saved, message, nextReservationUser);
