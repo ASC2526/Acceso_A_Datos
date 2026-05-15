@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <title>Librarian Management</title>
+  <link rel="stylesheet" th:href="@{/css/style.css}">
+</head>
+<body>
+<div class="container">
+  <header style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 2rem;">
+    <h1>Librarian Management</h1>
+    <form th:action="@{/logout}" method="post">
+      <button type="submit" class="btn" style="background: var(--secondary-color); color: white;">Logout</button>
+    </form>
+  </header>
+
+  <div th:if="${successMessage}" class="alert alert-success" th:text="${successMessage}"></div>
+  <div th:if="${errorMessage}" class="alert alert-error" th:text="${errorMessage}"></div>
+
+  <section style="margin-bottom: 3rem;">
+    <h3>Add New Book</h3>
+    <form th:action="@{/books/new}" method="post" class="filter-section" style="flex-wrap: wrap;">
+      <label>
+      <input type="text" name="isbn" placeholder="ISBN" required style="padding: 8px; border-radius: 4px; border: 1px solid #ccc;">
+      <input type="text" name="title" placeholder="Title" required style="padding: 8px; border-radius: 4px; border: 1px solid #ccc;">
+      <input type="number" name="copies" placeholder="Copies" min="1" value="1" required style="width: 80px; padding: 8px;">
+      </label>
+
+      <label>
+      <select name="categoryCode" required style="padding: 8px; border-radius: 4px;">
+        <option value="">Select Category</option>
+        <option th:each="cat : ${categories}" th:value="${cat.code}" th:text="${cat.name}"></option>
+      </select>
+      </label>
+
+      <button type="submit" class="btn btn-primary">Add Book</button>
+    </form>
+  </section>
+
+  <section>
+    <h3>Lend a Book</h3>
+    <form th:action="@{/lend}" method="post" class="filter-section">
+      <label>
+      <input type="text" name="isbn" placeholder="Book ISBN" required style="padding: 8px;">
+      <input type="text" name="userCode" placeholder="User Code" required style="padding: 8px;">
+      </label>
+      <button type="submit" class="btn btn-reserve">Lend Book</button>
+    </form>
+  </section>
+
+  <section style="margin-top: 2rem;">
+    <h3>Return a Book</h3>
+    <form th:action="@{/return}" method="post" class="filter-section">
+      <label>
+      <input type="text" name="isbn" placeholder="Book ISBN" required style="padding: 8px;">
+      <input type="text" name="userCode" placeholder="User Code" required style="padding: 8px;">
+      <button type="submit" class="btn" style="background: var(--secondary-color); color: white;">Return Book</button>
+      </label>
+    </form>
+  </section>
+</div>
+</body>
+</html>

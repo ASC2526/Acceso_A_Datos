@@ -4,6 +4,7 @@ import com.asc2526.da.unit5.library.exception.UserAlreadyExistsException;
 import com.asc2526.da.unit5.library.exception.UserNotFoundException;
 import com.asc2526.da.unit5.library.model.User;
 import com.asc2526.da.unit5.library.repository.UserRepository;
+import jakarta.transaction.Transactional;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -47,5 +48,22 @@ public class UserService {
                 .orElseThrow(() -> new UserNotFoundException(code));
 
         userRepository.delete(user);
+    }
+
+    @Transactional
+    public boolean updateUser(String code, String name, String surname) {
+        if(code == null || code.isBlank())
+            throw new IllegalArgumentException("The user code cannot be null");
+
+        User existingUser = userRepository.findById(code)
+                .orElseThrow(() -> new UserNotFoundException("User not found"));
+
+        boolean surnameChanged = !existingUser.getSurname().equalsIgnoreCase(surname);
+
+        existingUser.setName(name);
+        existingUser.setSurname(surname);
+
+        userRepository.save(existingUser);
+        return surnameChanged;
     }
 }

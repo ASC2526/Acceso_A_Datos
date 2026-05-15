@@ -1,5 +1,6 @@
 package com.asc2526.da.unit5.library.controller;
 
+import com.asc2526.da.unit5.library.dto.BookRequestDTO;
 import com.asc2526.da.unit5.library.model.Book;
 import com.asc2526.da.unit5.library.service.BookService;
 import jakarta.validation.Valid;
@@ -39,8 +40,8 @@ public class BookController {
     }
 
     @PostMapping
-    public ResponseEntity<Book> createBook(@Valid @RequestBody Book book) {
-        Book newBook = bookService.createBook(book);
+    public ResponseEntity<Book> createBook(@Valid @RequestBody BookRequestDTO dto) {
+        Book newBook = bookService.createBook(dto);
         return new ResponseEntity<>(newBook, HttpStatus.CREATED);
     }
 

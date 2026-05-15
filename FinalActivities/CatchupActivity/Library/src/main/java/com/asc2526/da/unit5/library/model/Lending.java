@@ -1,10 +1,12 @@
 package com.asc2526.da.unit5.library.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import jakarta.persistence.*;
 
 import java.time.LocalDate;
 
 @Entity
+@JsonIgnoreProperties
 @Table(name = "lendings")
 public class Lending {
 

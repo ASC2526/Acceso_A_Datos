@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <title>Library - Login</title>
+    <link rel="stylesheet" th:href="@{/css/style.css}">
+</head>
+<body>
+<div class="container" style="max-width: 400px; margin-top: 100px;">
+    <h1 style="text-align: center;">Library Access</h1>
+
+    <div th:if="${param.error}" class="alert alert-error">
+        Invalid surname or user code.
+    </div>
+
+    <form th:action="@{/login}" method="post">
+        <div style="margin-bottom: 1rem;">
+            <label>Surname (Username):</label><br>
+            <label>
+            <input type="text" name="username" class="btn" style="width: 100%; text-align: left; background: white; border: 1px solid #ccc;" required>
+            </label>
+        </div>
+
+        <div style="margin-bottom: 1rem;">
+            <label>User Code (Password):</label><br>
+            <label>
+            <input type="password" name="password" class="btn" style="width: 100%; text-align: left; background: white; border: 1px solid #ccc;" required>
+            </label>
+        </div>
+
+        <button type="submit" class="btn btn-primary" style="width: 100%;">Enter</button>
+    </form>
+
+    <p style="font-size: 0.8rem; color: var(--secondary-color); margin-top: 1rem; text-align: center;">
+        Librarian: use library / library
+    </p>
+</div>
+</body>
+</html>

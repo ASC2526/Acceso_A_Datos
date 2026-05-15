@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <title>Library - Home</title>
+    <link rel="stylesheet" th:href="@{/css/style.css}">
+</head>
+<body>
+<div class="container">
+    <header style="display: flex; justify-content: space-between; align-items: center;">
+        <h1>Library Catalog</h1>
+        <div>
+            <a th:href="@{/profile}" class="btn btn-primary">My Profile</a>
+            <form th:action="@{/logout}" method="post" style="display: inline;">
+                <button type="submit" class="btn" style="background: #64748b; color: white;">Logout</button>
+            </form>
+        </div>
+    </header>
+
+    <div th:if="${successMessage}" class="alert alert-success" th:text="${successMessage}"></div>
+    <div th:if="${errorMessage}" class="alert alert-error" th:text="${errorMessage}"></div>
+    <div th:if="${warningMessage}" class="alert" style="background-color: #fef3c7; color: #92400e; border: 1px solid #fcd34d;" th:text="${warningMessage}"></div>
+
+    <form th:action="@{/home}" method="get" class="filter-section">
+        <label>Filter by Category:</label>
+        <label>
+        <select name="categoryCode" onchange="this.form.submit()">
+            <option value="">All Categories</option>
+            <option th:each="cat : ${categories}"
+                    th:value="${cat.code}"
+                    th:text="${cat.name}"
+                    th:selected="${cat.code == selectedCategory}"></option>
+        </select>
+        </label>
+    </form>
+
+    <table>
+        <thead>
+        <tr>
+            <th>Title</th>
+            <th>ISBN</th>
+            <th>Category</th>
+            <th>Available Copies</th> <th>Action</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr th:each="book : ${books}">
+            <td th:text="${book.title}"></td>
+            <td th:text="${book.isbn}"></td>
+            <td th:text="${book.category.name}"></td>
+            <td th:text="${book.getAvailableCopies()}"></td>
+            <td>
+                <form th:action="@{/reserve}" method="post">
+                    <input type="hidden" name="isbn" th:value="${book.isbn}">
+                    <button type="submit" class="btn btn-reserve">Reserve</button>
+                </form>
+            </td>
+        </tr>
+        </tbody>
+    </table>
+</div>
+</body>
+</html>

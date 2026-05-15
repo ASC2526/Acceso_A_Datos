@@ -1,5 +1,6 @@
 package com.asc2526.da.unit5.library.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
@@ -9,6 +10,7 @@ import jakarta.validation.constraints.Size;
 import java.time.LocalDate;
 
 @Entity
+@JsonIgnoreProperties
 @Table(name = "users")
 public class User {
 
@@ -43,6 +45,11 @@ public class User {
     @Size(max = 100)
     @Column(name = "email", length = 100)
     private String email;
+
+    @Transient
+    public String getFullName() {
+        return name + " " + surname;
+    }
 
     public User() {}
 

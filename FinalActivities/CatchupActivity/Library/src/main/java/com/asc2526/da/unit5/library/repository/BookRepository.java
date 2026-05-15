@@ -9,4 +9,5 @@ import java.util.List;
 public interface BookRepository extends JpaRepository<Book, String> {
     List<Book> findByCategory(Category category);
     List<Book> findByCopiesGreaterThan(Integer count);
+    List<Book> findByCategoryCode(String categoryCode);
 }

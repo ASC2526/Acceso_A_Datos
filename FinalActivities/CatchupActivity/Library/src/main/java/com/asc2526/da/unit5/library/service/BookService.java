@@ -1,5 +1,6 @@
 package com.asc2526.da.unit5.library.service;
 
+import com.asc2526.da.unit5.library.dto.BookRequestDTO;
 import com.asc2526.da.unit5.library.exception.BookAlreadyExistsException;
 import com.asc2526.da.unit5.library.exception.BookNotFoundException;
 import com.asc2526.da.unit5.library.exception.CategoryNotFoundException;
@@ -7,9 +8,11 @@ import com.asc2526.da.unit5.library.model.Book;
 import com.asc2526.da.unit5.library.model.Category;
 import com.asc2526.da.unit5.library.repository.BookRepository;
 import com.asc2526.da.unit5.library.repository.CategoryRepository;
+import jakarta.transaction.Transactional;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 public class BookService {
@@ -23,7 +26,11 @@ public class BookService {
         this.categoryRepository = categoryRepository;
     }
 
-    public List<Book> getAll() { return bookRepository.findAll(); }
+    public List<Book> getAll() {
+        return bookRepository.findAll().stream()
+                .filter(b -> !b.isDeleted())
+                .collect(Collectors.toList());
+    }
 
     public Book findById(String isbn) {
         if (isbn == null) {
@@ -32,6 +39,10 @@ public class BookService {
 
         return bookRepository.findById(isbn)
                 .orElseThrow(() -> new BookNotFoundException(isbn));
+    }
+
+    public List<Book> findByCategory(String categoryCode) {
+        return bookRepository.findByCategoryCode(categoryCode);
     }
 
     public List<Book> getAvailableBooks() {
@@ -51,31 +62,20 @@ public class BookService {
         return bookRepository.findByCategory(category);
     }
 
-    public Book createBook(Book book) {
+    @Transactional
+    public Book createBook(BookRequestDTO dto) {
 
-        if (book == null) {
-            throw new IllegalArgumentException("Book cannot be null");
+        if (bookRepository.existsById(dto.getIsbn())) {
+            throw new BookAlreadyExistsException(dto.getIsbn());
         }
 
-        if (book.getIsbn() == null || book.getIsbn().isBlank()) {
-            throw new IllegalArgumentException("ISBN cannot be null or empty");
-        }
+        Category category = categoryRepository.findById(dto.getCategoryCode())
+                .orElseThrow(() -> new CategoryNotFoundException(dto.getCategoryCode()));
 
-        if (book.getTitle() == null || book.getTitle().isBlank()) {
-            throw new IllegalArgumentException("Title cannot be null or empty");
-        }
-
-        if (book.getCategory() == null || book.getCategory().getCode() == null || book.getCategory().getCode().isBlank()) {
-            throw new IllegalArgumentException("Category code cannot be null or empty");
-        }
-
-        if (bookRepository.existsById(book.getIsbn())) {
-            throw new BookAlreadyExistsException(book.getIsbn());
-        }
-
-        String categoryCode = book.getCategory().getCode();
-        Category category = categoryRepository.findById(categoryCode)
-                .orElseThrow(() -> new CategoryNotFoundException(categoryCode));
+        Book book = new Book();
+        book.setIsbn(dto.getIsbn());
+        book.setTitle(dto.getTitle());
+        book.setCopies(dto.getCopies());
         book.setCategory(category);
 
         return bookRepository.save(book);

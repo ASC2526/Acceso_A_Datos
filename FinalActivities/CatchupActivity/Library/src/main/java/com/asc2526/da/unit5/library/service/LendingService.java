@@ -78,6 +78,12 @@ public class LendingService {
         Optional<Reservation> reserveOpt = reservationRepository
                 .findOldestActiveReservation(book);
 
+        // 5 - verify already lent
+        Optional<Lending> alreadyLent = lendingRepository.findByBorrowerAndBook(user, book);
+        if (alreadyLent.isPresent()) {
+            throw new BookAlreadyLendByUserException(user.getCode(), book.getIsbn());
+        }
+
         if (reserveOpt.isPresent())
         {
             Reservation oldestReservation = reserveOpt.get();

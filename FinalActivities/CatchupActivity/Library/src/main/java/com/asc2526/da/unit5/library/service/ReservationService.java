@@ -76,6 +76,9 @@ public class ReservationService {
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new UserNotFoundException(userId));
 
+        if (user.getFined() != null && user.getFined().isAfter(LocalDate.now())) {
+            throw new IllegalArgumentException("User cannot reserve books while fined until: " + user.getFined());
+        }
         if ((user.getEmail() == null || user.getEmail().isBlank()) &&
                 (user.getPhone() == null || user.getPhone().isBlank())) {
             throw new IllegalArgumentException("User must have email or phone to make a reservation.");

@@ -1,12 +1,15 @@
 package com.asc2526.da.unit5.library.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
+import org.hibernate.annotations.SQLRestriction;
 
 @Entity
+@SQLRestriction("deleted = false")
 @Table(name = "books")
 public class Book {
 
@@ -34,10 +37,27 @@ public class Book {
     @Column(name = "publisher", length = 60)
     private String publisher;
 
+    @JsonIgnoreProperties({"books", "handler", "hibernateLazyInitializer"})
     @NotNull(message = "The category is required")
     @ManyToOne
     @JoinColumn(name = "category", nullable = false)
     private Category category;
+
+    @OneToMany(mappedBy = "book")
+    @JsonIgnoreProperties("book")
+    private java.util.List<Lending> lendings;
+
+    @Column(name = "deleted", nullable = false)
+    private boolean deleted = false;
+
+    @Transient
+    public int getAvailableCopies() {
+        if (lendings == null) return copies;
+        long active = lendings.stream()
+                .filter(l -> l.getReturningDate() == null)
+                .count();
+        return copies - (int) active;
+    }
 
     public Book() {}
 
@@ -58,4 +78,7 @@ public class Book {
 
     public Category getCategory() { return category; }
     public void setCategory(Category categoryObject) { this.category = categoryObject; }
+
+    public boolean isDeleted() { return deleted; }
+    public void setDeleted(boolean deleted) { this.deleted = deleted; }
 }
