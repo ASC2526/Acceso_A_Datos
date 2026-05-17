@@ -1,0 +1,19 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="en">
+<head>
+    <title>Library - Error</title>
+    <link rel="stylesheet" th:href="@{/css/style.css}">
+</head>
+<body>
+<div class="container" style="max-width: 500px; text-align: center; margin-top: 100px;">
+    <h1 style="color: var(--danger-color);">Error. Something went wrong</h1>
+    <p style="margin: 1.5rem 0; font-size: 1.1rem;">
+        An error occurred processing your request.
+    </p>
+
+    <div class="alert alert-error" th:if="${errorMessage}" th:text="${errorMessage}"></div>
+
+    <a th:href="@{/home}" class="btn btn-primary" style="margin-top: 1rem;">Return</a>
+</div>
+</body>
+</html>

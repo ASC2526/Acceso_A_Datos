@@ -90,7 +90,6 @@ public class HomeWebController {
                 ra.addFlashAttribute("successMessage", "Surname updated. Please login with your new username.");
                 return "redirect:/login";
             }
-            userService.updateUser(auth.getName(), name, surname);
             ra.addFlashAttribute("successMessage", "Profile updated successfully.");
         } catch (Exception e) {
             ra.addFlashAttribute("errorMessage", "Error updating profile: " + e.getMessage());

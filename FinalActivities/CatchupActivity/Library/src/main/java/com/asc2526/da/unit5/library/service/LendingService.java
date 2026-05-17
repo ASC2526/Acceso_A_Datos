@@ -75,8 +75,7 @@ public class LendingService {
         }
 
         // 4 - verify reservation
-        Optional<Reservation> reserveOpt = reservationRepository
-                .findOldestActiveReservation(book);
+        Optional<Reservation> reserveOpt = getOldestValidReservation(book);
 
         // 5 - verify already lent
         Optional<Lending> alreadyLent = lendingRepository.findByBorrowerAndBook(user, book);
@@ -169,8 +168,7 @@ public class LendingService {
 
         // notify active reservations
         String nextReservationUser = null;
-        Optional<Reservation> nextRes = reservationRepository
-                .findOldestActiveReservation(book);
+        Optional<Reservation> nextRes = getOldestValidReservation(book);
 
         if (nextRes.isPresent())
         {
@@ -180,5 +178,17 @@ public class LendingService {
         }
         Lending saved = lendingRepository.save(lending);
         return new ReturnResponseDTO(saved, message, nextReservationUser);
+    }
+
+    private Optional<Reservation> getOldestValidReservation(Book book) {
+        List<Reservation> activeReservations = reservationRepository.findByBookAndLendingNullOrderByDateAsc(book);
+
+        return activeReservations.stream()
+                .filter(res -> {
+                    User borrower = res.getBorrower();
+                    boolean isFinedCurrently = borrower.getFined() != null && borrower.getFined().isAfter(LocalDate.now());
+                    return !isFinedCurrently;
+                })
+                .findFirst();
     }
 }

@@ -1,5 +1,6 @@
 package com.asc2526.da.unit5.library.exception;
 
+import org.springframework.core.annotation.Order;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.http.converter.HttpMessageNotReadableException;
@@ -10,7 +11,8 @@ import org.springframework.web.method.annotation.MethodArgumentTypeMismatchExcep
 
 import java.util.stream.Collectors;
 
-@RestControllerAdvice
+@RestControllerAdvice(basePackages = "com.asc2526.da.unit5.library.controller")
+@Order(1)
 public class GlobalExceptionHandler {
 
     // 404 not found
@@ -79,7 +81,6 @@ public class GlobalExceptionHandler {
 
     @ExceptionHandler(Exception.class)
     public ResponseEntity<ApiError> handleGeneric(Exception ex) {
-        ex.printStackTrace();
         return buildResponse(HttpStatus.INTERNAL_SERVER_ERROR, "Unexpected server error: " + ex.getMessage());
     }
 

@@ -28,7 +28,7 @@ public class BookService {
 
     public List<Book> getAll() {
         return bookRepository.findAll().stream()
-                .filter(b -> !b.isDeleted())
+                .filter(book -> book.getCopies() != null && book.getCopies() > 0)
                 .collect(Collectors.toList());
     }
 

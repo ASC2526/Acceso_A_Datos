@@ -6,10 +6,8 @@ import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
-import org.hibernate.annotations.SQLRestriction;
 
 @Entity
-@SQLRestriction("deleted = false")
 @Table(name = "books")
 public class Book {
 
@@ -47,9 +45,6 @@ public class Book {
     @JsonIgnoreProperties("book")
     private java.util.List<Lending> lendings;
 
-    @Column(name = "deleted", nullable = false)
-    private boolean deleted = false;
-
     @Transient
     public int getAvailableCopies() {
         if (lendings == null) return copies;
@@ -79,6 +74,4 @@ public class Book {
     public Category getCategory() { return category; }
     public void setCategory(Category categoryObject) { this.category = categoryObject; }
 
-    public boolean isDeleted() { return deleted; }
-    public void setDeleted(boolean deleted) { this.deleted = deleted; }
 }

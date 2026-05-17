@@ -1,15 +1,12 @@
 package com.asc2526.da.unit5.library.service;
 
-import com.asc2526.da.unit5.library.exception.BookAlreadyLendByUserException;
 import com.asc2526.da.unit5.library.exception.BookNotFoundException;
 import com.asc2526.da.unit5.library.exception.ReservationAlreadyExistsException;
 import com.asc2526.da.unit5.library.exception.UserNotFoundException;
 import com.asc2526.da.unit5.library.model.Book;
-import com.asc2526.da.unit5.library.model.Lending;
 import com.asc2526.da.unit5.library.model.Reservation;
 import com.asc2526.da.unit5.library.model.User;
 import com.asc2526.da.unit5.library.repository.BookRepository;
-import com.asc2526.da.unit5.library.repository.LendingRepository;
 import com.asc2526.da.unit5.library.repository.ReservationRepository;
 import com.asc2526.da.unit5.library.repository.UserRepository;
 import org.springframework.stereotype.Service;
@@ -24,13 +21,11 @@ public class ReservationService {
     private final ReservationRepository reservationRepository;
     private final BookRepository bookRepository;
     private final UserRepository userRepository;
-    private final LendingRepository lendingRepository;
 
-    public ReservationService(ReservationRepository reservationRepository, BookRepository bookRepository, UserRepository userRepository, LendingRepository lendingRepository) {
+    public ReservationService(ReservationRepository reservationRepository, BookRepository bookRepository, UserRepository userRepository) {
         this.reservationRepository = reservationRepository;
         this.bookRepository = bookRepository;
         this.userRepository = userRepository;
-        this.lendingRepository = lendingRepository;
     }
 
     public List<Reservation> getAllReservations() {
@@ -84,26 +79,12 @@ public class ReservationService {
             throw new IllegalArgumentException("User must have email or phone to make a reservation.");
         }
 
-        int activeLendings = lendingRepository.countActiveLendingsByBook(book);
-        int available = book.getCopies() - activeLendings;
-
-        if (available > 0) {
-            throw new IllegalArgumentException(
-                    "The book is available and cannot be reserved"
-            );
-        }
-
         Optional<Reservation> optReserve = reservationRepository
                 .findReservationByBookAndBorrowerAndLendingNull(book, user);
 
         if (optReserve.isPresent())
             throw new ReservationAlreadyExistsException(isbn, userId);
 
-        Optional<Lending> alreadyLend = lendingRepository
-                .findByBorrowerAndBook(user, book);
-
-        if (alreadyLend.isPresent())
-            throw new BookAlreadyLendByUserException(userId, isbn);
 
         Reservation reservation = new Reservation();
         reservation.setBook(book);
