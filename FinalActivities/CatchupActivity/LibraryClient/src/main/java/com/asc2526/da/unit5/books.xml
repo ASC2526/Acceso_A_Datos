@@ -1,0 +1,17 @@
+<books>
+    <book>
+        <isbn>9781234562323</isbn>
+        <title>Test Book Four</title>
+        <copies>3</copies>
+        <outline>A test book</outline>
+        <category>DRAMA</category>
+    </book>
+    <book>
+        <isbn>9781234564444</isbn>
+        <title>Test Book Three</title>
+        <copies>3</copies>
+        <outline>A test book</outline>
+        <publisher>Test Publisher</publisher>
+        <category>DRAMA</category>
+    </book>
+</books>

@@ -8,7 +8,6 @@ public class Test1 {
         App testMain = new App();
         String[] params = new String[0];
 
-//        VTSchoolDBManager.initDatabase();
 
         System.out.println("1 SIN PARAMETROS");
         testMain.main(params);

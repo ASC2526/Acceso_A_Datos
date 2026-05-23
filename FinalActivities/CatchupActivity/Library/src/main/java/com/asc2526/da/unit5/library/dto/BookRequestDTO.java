@@ -15,6 +15,11 @@ public class BookRequestDTO {
     @Min(value = 0, message = "Copies cannot be negative")
     private int copies;
 
+    @NotBlank(message = "Outline is required")
+    private String outline;
+
+    private String publisher;
+
     @NotBlank(message = "Category code is required")
     private String categoryCode;
 
@@ -31,4 +36,20 @@ public class BookRequestDTO {
 
     public String getCategoryCode() { return categoryCode; }
     public void setCategoryCode(String categoryCode) { this.categoryCode = categoryCode; }
+
+    public String getPublisher() {
+        return publisher;
+    }
+
+    public void setPublisher(String publisher) {
+        this.publisher = publisher;
+    }
+
+    public String getOutline() {
+        return outline;
+    }
+
+    public void setOutline(String outline) {
+        this.outline = outline;
+    }
 }

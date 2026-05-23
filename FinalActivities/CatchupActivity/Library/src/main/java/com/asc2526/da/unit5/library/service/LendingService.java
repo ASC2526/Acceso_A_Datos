@@ -174,7 +174,9 @@ public class LendingService {
         {
             message = "ADVICE: the book returned has a pending reservation.";
             User resUser = nextRes.get().getBorrower();
-            nextReservationUser = resUser.getName() + " " + resUser.getSurname() + " (" + resUser.getCode() + ")";
+            String name = (resUser.getName() != null ? resUser.getName() : "");
+            String surname = (resUser.getSurname() != null ? resUser.getSurname() : "");
+            nextReservationUser = name + " " + surname + " (" + resUser.getCode() + ")";
         }
         Lending saved = lendingRepository.save(lending);
         return new ReturnResponseDTO(saved, message, nextReservationUser);

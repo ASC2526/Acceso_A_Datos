@@ -40,10 +40,16 @@
     <h3>Lend a Book</h3>
     <form th:action="@{/lend}" method="post" class="filter-section">
       <label>
-      <input type="text" name="isbn" placeholder="Book ISBN" required style="padding: 8px;">
-      <input type="text" name="userCode" placeholder="User Code" required style="padding: 8px;">
-      </label>
+      <select name="isbn" required style="padding: 8px;">
+        <option value="">-- Select Book --</option>
+        <option th:each="book : ${availableBooks}" th:value="${book.isbn}" th:text="${book.title}"></option>
+      </select>
+      <select name="userCode" required style="padding: 8px;">
+        <option value="">-- Select User --</option>
+        <option th:each="u : ${users}" th:value="${u.code}" th:text="${u.name + ' ' + u.surname}"></option>
+      </select>
       <button type="submit" class="btn btn-reserve">Lend Book</button>
+      </label>
     </form>
   </section>
 
@@ -51,8 +57,14 @@
     <h3>Return a Book</h3>
     <form th:action="@{/return}" method="post" class="filter-section">
       <label>
-      <input type="text" name="isbn" placeholder="Book ISBN" required style="padding: 8px;">
-      <input type="text" name="userCode" placeholder="User Code" required style="padding: 8px;">
+      <select name="isbn" required style="padding: 8px;">
+        <option value="">-- Select Active Lending --</option>
+        <option th:each="lend : ${activeLendings}"
+                th:value="${lend.book.isbn}"
+                th:text="${lend.book.title + ' (Borrower: ' + lend.borrower.name + ')'}">
+        </option>
+      </select>
+      <input th:each="lend : ${activeLendings}" type="hidden" th:if="${lend.book.isbn == selectedIsbn}" name="userCode" th:value="${lend.borrower.code}">
       <button type="submit" class="btn" style="background: var(--secondary-color); color: white;">Return Book</button>
       </label>
     </form>

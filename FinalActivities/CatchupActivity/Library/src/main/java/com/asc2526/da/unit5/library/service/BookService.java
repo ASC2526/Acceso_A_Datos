@@ -76,6 +76,8 @@ public class BookService {
         book.setIsbn(dto.getIsbn());
         book.setTitle(dto.getTitle());
         book.setCopies(dto.getCopies());
+        book.setOutline(dto.getOutline()); // <--- ¡Verifica que esto exista!
+        book.setPublisher(dto.getPublisher());
         book.setCategory(category);
 
         return bookRepository.save(book);

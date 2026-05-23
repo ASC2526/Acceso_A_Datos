@@ -2,10 +2,7 @@ package com.asc2526.da.unit5.library.model;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import jakarta.persistence.*;
-import jakarta.validation.constraints.Email;
-import jakarta.validation.constraints.NotBlank;
-import jakarta.validation.constraints.Past;
-import jakarta.validation.constraints.Size;
+import jakarta.validation.constraints.*;
 
 import java.time.LocalDate;
 
@@ -17,6 +14,7 @@ public class User {
     @Id
     @NotBlank
     @Size(max = 8)
+    @Pattern(regexp = "^[A-Z0-9]{7,8}$", message = "Invalid code format")
     @Column(name = "code", nullable = false, length = 8)
     private String code;
 
@@ -38,10 +36,11 @@ public class User {
     private LocalDate fined;
 
     @Size(max = 9)
+    @Pattern(regexp = "^\\d{9}$", message = "Phone must be exactly 9 digits")
     @Column(name = "phone", length = 9)
     private String phone;
 
-    @Email
+    @Email(message = "Invalid email format")
     @Size(max = 100)
     @Column(name = "email", length = 100)
     private String email;

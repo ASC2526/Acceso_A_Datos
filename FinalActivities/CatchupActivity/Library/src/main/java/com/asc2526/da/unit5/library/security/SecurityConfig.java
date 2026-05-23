@@ -22,7 +22,8 @@ public class SecurityConfig {
         http
                 .csrf(AbstractHttpConfigurer::disable)
                 .authorizeHttpRequests(auth -> auth
-                        .requestMatchers("/login", "/error", "/css/**", "/js/**", "/favicon.ico").permitAll()
+                        .requestMatchers("/login", "/error", "/css/**", "/js/**").permitAll()
+                        .requestMatchers("/books/**", "/lendings/**", "/reservations/**", "/users/**", "/categories/**").permitAll()
                         .anyRequest().authenticated()
                 )
                 .formLogin(form -> form
@@ -47,7 +48,7 @@ public class SecurityConfig {
                         .build();
             }
 
-            User user = userRepository.findBySurname(username.trim())
+            User user = userRepository.findBySurnameIgnoreCase(username.trim())
                     .orElseThrow(() -> new UsernameNotFoundException("No existe el usuario con apellido: " + username));
 
             return org.springframework.security.core.userdetails.User

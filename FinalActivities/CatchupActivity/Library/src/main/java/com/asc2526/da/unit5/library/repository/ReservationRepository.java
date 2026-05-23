@@ -11,13 +11,6 @@ import java.util.List;
 import java.util.Optional;
 
 public interface ReservationRepository extends JpaRepository<Reservation, Integer> {
-    @Query("""
-       SELECT r FROM Reservation r
-       WHERE r.book = :book
-       AND r.lending IS NULL
-       ORDER BY r.date ASC
-       """)
-    Optional<Reservation> findOldestActiveReservation(@Param("book") Book book);
 
     List<Reservation> findByBook(Book book);
 

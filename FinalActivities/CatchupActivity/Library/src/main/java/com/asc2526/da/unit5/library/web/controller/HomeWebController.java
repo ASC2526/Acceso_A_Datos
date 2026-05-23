@@ -10,6 +10,7 @@ import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
@@ -43,8 +44,12 @@ public class HomeWebController {
         }
 
         if (auth.getAuthorities().stream().anyMatch(a -> Objects.equals(a.getAuthority(), "ROLE_ADMIN"))) {
-            model.addAttribute("books", bookService.getAll());
             model.addAttribute("categories", categoryService.getAllCategories());
+            // para lend
+            model.addAttribute("availableBooks", bookService.getAvailableBooks());
+            model.addAttribute("users", userService.getAllUsers());
+            // para return
+            model.addAttribute("activeLendings", lendingService.getActiveLendings());
             return "librarian-home";
         }
 
@@ -84,8 +89,8 @@ public class HomeWebController {
                                 HttpServletRequest request,
                                 RedirectAttributes ra) {
         try {
-            boolean logoutRequired = userService.updateUser(auth.getName(), name, surname);
-            if (logoutRequired) {
+            boolean surnameChanged = userService.updateUser(auth.getName(), name, surname);
+            if (surnameChanged) {
                 request.getSession().invalidate();
                 ra.addFlashAttribute("successMessage", "Surname updated. Please login with your new username.");
                 return "redirect:/login";
@@ -113,7 +118,11 @@ public class HomeWebController {
     }
 
     @PostMapping("/books/new")
-    public String addBook(@ModelAttribute BookRequestDTO bookDto, RedirectAttributes ra) {
+    public String addBook(@ModelAttribute BookRequestDTO bookDto, BindingResult result, RedirectAttributes ra) {
+        if (result.hasErrors()) {
+            ra.addFlashAttribute("errorMessage", "Error: Check your input data (ISBN must be 13 digits and copies must be positive).");
+            return "redirect:/home";
+        }
         try {
             bookService.createBook(bookDto);
             ra.addFlashAttribute("successMessage", "Book added successfully.");
