@@ -3,6 +3,7 @@ package com.asc2526.da.unit5.library.dto;
 import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Pattern;
+import jakarta.validation.constraints.Size;
 
 public class BookRequestDTO {
     @NotBlank(message = "ISBN is required")
@@ -12,10 +13,10 @@ public class BookRequestDTO {
     @NotBlank(message = "Title is required")
     private String title;
 
-    @Min(value = 0, message = "Copies cannot be negative")
+    @Min(value = 1, message = "Copies cannot be negative")
     private int copies;
 
-    @NotBlank(message = "Outline is required")
+    @Size(max = 255)
     private String outline;
 
     private String publisher;

@@ -17,20 +17,33 @@ public class ApiManager {
         );
     }
 
+    public boolean checkBookExists(String isbn) {
+        try {
+            HttpResponse response = connection.getRequest("books/" + isbn);
+            return response.getStatusCode() == 200;
+        } catch (Exception e) {
+            return false;
+        }
+    }
+
+    public void deleteBook(String isbn) {
+        try {
+            connection.delete("books", isbn);
+        } catch (Exception ignored) {}
+    }
+
     // books
     public void addBook(Book book) throws Exception {
 
         String categoryCode = (book.getCategory() != null)
                 ? book.getCategory().getCode()
-                : "";
+                : "OTHER";
 
         String json = new JSONObject()
                 .put("isbn", book.getIsbn())
                 .put("title", book.getTitle())
                 .put("copies", book.getCopies())
                 .put("categoryCode", categoryCode)
-                .put("outline", book.getOutline() != null ? book.getOutline() : "")
-                .put("publisher", book.getPublisher() != null ? book.getPublisher() : "")
                 .toString();
 
         HttpResponse response = connection.post("books", json);

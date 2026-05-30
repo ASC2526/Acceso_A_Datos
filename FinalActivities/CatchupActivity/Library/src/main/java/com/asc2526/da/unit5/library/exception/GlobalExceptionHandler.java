@@ -21,7 +21,8 @@ public class GlobalExceptionHandler {
             BookNotFoundException.class,
             UserNotFoundException.class,
             CategoryNotFoundException.class,
-            LendingNotActiveException.class
+            LendingNotActiveException.class,
+            LendingNotFoundException.class
     })
     public ResponseEntity<ApiError> handleNotFound(Exception ex) {
         return buildResponse(HttpStatus.NOT_FOUND, ex.getMessage());

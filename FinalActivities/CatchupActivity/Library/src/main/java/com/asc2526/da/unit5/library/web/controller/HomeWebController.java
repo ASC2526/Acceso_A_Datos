@@ -156,11 +156,11 @@ public class HomeWebController {
     }
 
     @PostMapping("/return")
-    public String returnBook(@RequestParam String isbn,
-                             @RequestParam String userCode,
+    public String returnBook(@RequestParam Integer lendingId,
                              RedirectAttributes ra) {
         try {
-            ReturnResponseDTO response = lendingService.returnBook(isbn, userCode);
+            Lending lending = lendingService.getLendingById(lendingId);
+            ReturnResponseDTO response = lendingService.returnBook(lending.getBook().getIsbn(), lending.getBorrower().getCode());
             ra.addFlashAttribute("successMessage", response.getMessage());
             if (response.getNextReservationUser() != null) {
                 ra.addFlashAttribute("warningMessage", "ADVICE: Next reservation for " + response.getNextReservationUser());

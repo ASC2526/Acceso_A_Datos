@@ -34,6 +34,16 @@ public class LendingService {
         this.reservationRepository = reservationRepository;
     }
 
+    public Lending getLendingById(Integer lendingId)
+    {
+        if (lendingId == null)
+        {
+            throw new IllegalArgumentException("Lending id cannot be null");
+        }
+        return lendingRepository.findById(lendingId)
+                .orElseThrow(() -> new LendingNotFoundException(lendingId));
+    }
+
     @Transactional
     public Lending lendBook(Lending lending) {
 

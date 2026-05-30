@@ -57,11 +57,11 @@
     <h3>Return a Book</h3>
     <form th:action="@{/return}" method="post" class="filter-section">
       <label>
-      <select name="isbn" required style="padding: 8px;">
+      <select name="lendingId" required style="padding: 8px;">
         <option value="">-- Select Active Lending --</option>
         <option th:each="lend : ${activeLendings}"
-                th:value="${lend.book.isbn}"
-                th:text="${lend.book.title + ' (Borrower: ' + lend.borrower.name + ')'}">
+                th:value="${lend.id}"
+                th:text="${lend.book.title + ' → ' + lend.borrower.name}">
         </option>
       </select>
       <input th:each="lend : ${activeLendings}" type="hidden" th:if="${lend.book.isbn == selectedIsbn}" name="userCode" th:value="${lend.borrower.code}">
