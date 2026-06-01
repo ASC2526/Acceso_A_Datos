@@ -44,5 +44,4 @@ public class BookController {
         Book newBook = bookService.createBook(dto);
         return new ResponseEntity<>(newBook, HttpStatus.CREATED);
     }
-
 }

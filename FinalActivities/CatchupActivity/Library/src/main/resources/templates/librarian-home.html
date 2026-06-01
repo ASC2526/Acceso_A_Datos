@@ -16,6 +16,7 @@
   <div th:if="${successMessage}" class="alert alert-success" th:text="${successMessage}"></div>
   <div th:if="${errorMessage}" class="alert alert-error" th:text="${errorMessage}"></div>
 
+
   <section style="margin-bottom: 3rem;">
     <h3>Add New Book</h3>
     <form th:action="@{/books/new}" method="post" class="filter-section" style="flex-wrap: wrap;">

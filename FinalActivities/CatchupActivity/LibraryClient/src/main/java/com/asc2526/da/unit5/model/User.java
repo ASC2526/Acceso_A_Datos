@@ -1,5 +1,7 @@
 package com.asc2526.da.unit5.model;
 
+import java.time.LocalDate;
+
 public class User {
 
     private String code;
@@ -7,7 +9,7 @@ public class User {
     private String surname;
     private String phone;
     private String email;
-    private String fined;
+    private LocalDate fined;
 
     public User() {}
 
@@ -26,6 +28,6 @@ public class User {
     public String getEmail() { return email; }
     public void setEmail(String email) { this.email = email; }
 
-    public String getFined() { return fined; }
-    public void setFined(String fined) { this.fined = fined; }
+    public LocalDate getFined() { return fined; }
+    public void setFined(LocalDate fined) { this.fined = fined; }
 }

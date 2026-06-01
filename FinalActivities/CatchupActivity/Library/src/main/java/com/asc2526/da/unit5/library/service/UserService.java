@@ -9,6 +9,7 @@ import org.springframework.stereotype.Service;
 
 import java.util.List;
 
+
 @Service
 public class UserService {
 
@@ -36,6 +37,12 @@ public class UserService {
 
         if (userRepository.existsById(user.getCode()))
             throw new UserAlreadyExistsException(user.getCode());
+
+        if (userRepository.findBySurnameIgnoreCase(user.getSurname()).isPresent())
+            throw new IllegalArgumentException("Surname already in use: " + user.getSurname());
+
+        if (userRepository.findByEmail(user.getEmail()).isPresent())
+            throw new IllegalArgumentException("Email already in use " + user.getEmail());
 
         return userRepository.save(user);
     }
@@ -66,4 +73,5 @@ public class UserService {
         userRepository.save(existingUser);
         return surnameChanged;
     }
+
 }

@@ -2,11 +2,13 @@ package com.asc2526.da.unit5.service;
 
 import com.asc2526.da.unit5.api.ApiManager;
 import com.asc2526.da.unit5.model.Book;
+import com.asc2526.da.unit5.model.User;
 import com.asc2526.da.unit5.util.BookHandler;
 import com.asc2526.da.unit5.util.XMLParser;
 
 import javax.xml.parsers.SAXParser;
 import java.io.File;
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 

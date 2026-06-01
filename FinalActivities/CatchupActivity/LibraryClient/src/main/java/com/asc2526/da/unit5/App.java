@@ -11,8 +11,8 @@ public class App {
             Options:
               -h, --help                          show this help
               -a, --add <file.xml>                add books from XML file
-              -l, --lend <isbn> <user_code>       lend a book to a user
-              -r, --return <isbn> <user_code>     return a book
+              -l, --lend <ISBN> <user_code>       lend a book to a user
+              -r, --return <ISBN> <user_code>     return a book
             """;
 
     public static void main(String[] args) {
@@ -39,7 +39,7 @@ public class App {
 
             case "-l", "--lend" -> {
                 if (args.length < 3) {
-                    System.out.println("ERROR --> Usage: --lend <isbn> <user_code>");
+                    System.out.println("ERROR --> Usage: --lend <ISBN> <user_code>");
                     return;
                 }
                 LendingService.lend(args[1], args[2]);
@@ -47,7 +47,7 @@ public class App {
 
             case "-r", "--return" -> {
                 if (args.length < 3) {
-                    System.out.println("ERROR --> Usage: --return <isbn> <user_code>");
+                    System.out.println("ERROR --> Usage: --return <ISBN> <user_code>");
                     return;
                 }
                 LendingService.returnBook(args[1], args[2]);
