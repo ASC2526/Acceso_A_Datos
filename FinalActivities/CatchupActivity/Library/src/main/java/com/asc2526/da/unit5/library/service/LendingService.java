@@ -1,5 +1,6 @@
 package com.asc2526.da.unit5.library.service;
 
+import com.asc2526.da.unit5.library.dto.ActiveLendingsDTO;
 import com.asc2526.da.unit5.library.dto.ReturnResponseDTO;
 import com.asc2526.da.unit5.library.exception.*;
 import com.asc2526.da.unit5.library.model.Book;
@@ -15,6 +16,7 @@ import jakarta.transaction.Transactional;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
@@ -138,6 +140,28 @@ public class LendingService {
         return lendingRepository.findByReturningDateIsNull();
     }
 
+    public List<ActiveLendingsDTO> getActiveLentBooks() {
+        List<ActiveLendingsDTO> dtos = new ArrayList<>();
+        List<Lending> activeLendings = lendingRepository.findByReturningDateIsNull();
+
+        if (activeLendings.isEmpty())
+        {
+            throw new NoActiveLendingsException("There is no active lendings");
+        }
+
+        for (Lending l : activeLendings)
+        {
+            String isbn = l.getBook().getIsbn();
+            String title = l.getBook().getTitle();
+            String borrowedBy = l.getBorrower().getCode() + " - " + l.getBorrower().getFullName();
+            LocalDate lendingDate = l.getLendingDate();
+            LocalDate dueTo = lendingDate.plusDays(LibraryConstants.LENDING_DAYS);
+            String delayed = (dueTo.isAfter(LocalDate.now())) ? "Yes" : "";
+            ActiveLendingsDTO dto = new ActiveLendingsDTO(isbn, title, borrowedBy, dueTo, delayed);
+            dtos.add(dto);
+        }
+        return dtos;
+    }
     public List<Lending> getLendingsByBook(String isbn) {
         if (isbn == null)
             throw new IllegalArgumentException("The book cannot be null");

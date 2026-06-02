@@ -40,4 +40,11 @@ public class ReservationController {
         Reservation reservation = reservationService.createReservation(userId, isbn);
         return new ResponseEntity<>(reservation, HttpStatus.CREATED);
     }
+
+    @DeleteMapping("/user/{userId}/book/{isbn}")
+    public ResponseEntity<Void> deleteActiveReservation(@PathVariable String isbn, @PathVariable String userId) {
+        reservationService.cancelActiveReservation(isbn, userId);
+        return ResponseEntity.noContent().build();
+    }
+
 }

@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <title>Library - Home</title>
+  <link rel="stylesheet" th:href="@{/css/style.css}">
+</head>
+<body>
+<div class="container">
+  <header style="display: flex; justify-content: space-between; align-items: center;">
+    <h1>Lent Books</h1>
+    <div>
+      <form th:action="@{/logout}" method="post" style="display: inline;">
+        <button type="submit" class="btn" style="background: #64748b; color: white;">Logout</button>
+      </form>
+    </div>
+  </header>
+
+  <div th:if="${successMessage}" class="alert alert-success" th:text="${successMessage}"></div>
+  <div th:if="${errorMessage}" class="alert alert-error" th:text="${errorMessage}"></div>
+  <div th:if="${warningMessage}" class="alert" style="background-color: #fef3c7; color: #92400e; border: 1px solid #fcd34d;" th:text="${warningMessage}"></div>
+
+  <table>
+    <thead>
+    <tr>
+      <th>ISBN</th>
+      <th>Title</th>
+      <th>Borrowed by</th>
+      <th>Due To</th>
+      <th>Delayed?</th>
+    </tr>
+    </thead>
+    <tbody>
+    <tr th:each="lending : ${activeLendings}">
+      <td th:text="${lending.isbn}"></td>
+      <td th:text="${lending.title}"></td>
+      <td th:text="${lending.borrowedBy}"></td>
+      <td th:text="${lending.dueTo}"></td>
+      <td th:text="${lending.delayed}"></td>
+    </tr>
+    </tbody>
+  </table>
+
+  <a th:href="@{/librarian-home}" class="btn">Back to Home</a>
+
+</div>
+</body>
+</html>

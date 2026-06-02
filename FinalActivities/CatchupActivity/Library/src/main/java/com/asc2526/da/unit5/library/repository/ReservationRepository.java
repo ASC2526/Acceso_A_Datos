@@ -25,4 +25,5 @@ public interface ReservationRepository extends JpaRepository<Reservation, Intege
     Optional<Reservation> findReservationByBookAndBorrowerAndLendingNull(@Param("book") Book book, @Param("borrower") User borrower);
 
     List<Reservation> findByBookAndLendingNullOrderByDateAsc(Book book);
+
 }

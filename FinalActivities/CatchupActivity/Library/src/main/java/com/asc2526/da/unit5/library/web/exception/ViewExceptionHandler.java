@@ -1,3 +1,4 @@
+
 package com.asc2526.da.unit5.library.web.exception;
 
 import org.springframework.core.annotation.Order;
@@ -14,12 +15,13 @@ public class ViewExceptionHandler {
 
     @ExceptionHandler(NoResourceFoundException.class)
     @ResponseStatus(HttpStatus.NOT_FOUND)
-    public void handleNoResource(NoResourceFoundException ex) {
-
+    public String handleNoResource(NoResourceFoundException ex) {
+        return String.valueOf(ex);
     }
     @ExceptionHandler(Exception.class)
     public String handleException(Exception e, RedirectAttributes redirectAttributes) {
         redirectAttributes.addFlashAttribute("errorMessage", e.getMessage());
+
         return "redirect:/error";
     }
 }

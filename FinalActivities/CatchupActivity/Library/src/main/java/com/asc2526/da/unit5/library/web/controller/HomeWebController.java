@@ -1,5 +1,6 @@
 package com.asc2526.da.unit5.library.web.controller;
 
+import com.asc2526.da.unit5.library.dto.ActiveLendingsDTO;
 import com.asc2526.da.unit5.library.dto.BookRequestDTO;
 import com.asc2526.da.unit5.library.dto.ReturnResponseDTO;
 import com.asc2526.da.unit5.library.model.Book;
@@ -169,5 +170,12 @@ public class HomeWebController {
             ra.addFlashAttribute("errorMessage", e.getMessage());
         }
         return "redirect:/home";
+    }
+
+    @GetMapping("/librarian-home")
+    public String getActiveLendings(Model model) {
+        List<ActiveLendingsDTO> activeLendings = lendingService.getActiveLentBooks();
+        model.addAttribute("activeLendings", activeLendings);
+        return "lent-books";
     }
 }

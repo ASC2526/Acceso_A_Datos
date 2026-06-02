@@ -1,5 +1,6 @@
 package com.asc2526.da.unit5.library.service;
 
+import com.asc2526.da.unit5.library.exception.ActiveReservationNotFoundException;
 import com.asc2526.da.unit5.library.exception.BookNotFoundException;
 import com.asc2526.da.unit5.library.exception.ReservationAlreadyExistsException;
 import com.asc2526.da.unit5.library.exception.UserNotFoundException;
@@ -54,6 +55,32 @@ public class ReservationService {
                 .orElseThrow(() -> new UserNotFoundException(userId));
 
         return reservationRepository.findByBorrower(user);
+    }
+
+    public void cancelActiveReservation(String isbn, String userId) {
+        if (isbn == null || isbn.isBlank()) {
+            throw new IllegalArgumentException("ISBN cannot be null or empty");
+        }
+        if (userId == null || userId.isBlank()) {
+            throw new IllegalArgumentException("UserId cannot be null or empty");
+        }
+
+        Book book = bookRepository.findById(isbn)
+                .orElseThrow(() -> new BookNotFoundException(isbn));
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new UserNotFoundException(userId));
+
+        Optional<Reservation> optReserve = reservationRepository
+                .findReservationByBookAndBorrowerAndLendingNull(book, user);
+
+        if (optReserve.isEmpty())
+        {
+            throw new ActiveReservationNotFoundException(isbn, userId);
+        }
+
+        Reservation res = optReserve.get();
+
+        reservationRepository.delete(res);
     }
 
     public Reservation createReservation(String userId, String isbn) {
