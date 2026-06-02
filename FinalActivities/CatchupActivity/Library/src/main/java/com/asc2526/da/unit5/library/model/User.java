@@ -1,5 +1,6 @@
 package com.asc2526.da.unit5.library.model;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.*;
@@ -33,6 +34,7 @@ public class User {
     private LocalDate birthdate;
 
     @Column(name = "fined")
+    @JsonFormat(pattern = "yyyy-MM-dd")
     private LocalDate fined;
 
     @Size(max = 9)

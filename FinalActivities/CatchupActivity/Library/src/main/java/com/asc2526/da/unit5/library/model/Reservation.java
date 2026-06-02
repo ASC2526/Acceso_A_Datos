@@ -1,5 +1,6 @@
 package com.asc2526.da.unit5.library.model;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import jakarta.persistence.*;
 import java.time.LocalDate;
 
@@ -12,6 +13,7 @@ public class Reservation {
     private Integer id;
 
     @Column(name = "date", nullable = false)
+    @JsonFormat(pattern = "yyyy-MM-dd")
     private LocalDate date;
 
     @ManyToOne

@@ -9,7 +9,7 @@ public class User {
     private String surname;
     private String phone;
     private String email;
-    private LocalDate fined;
+    private String fined;
 
     public User() {}
 
@@ -28,6 +28,6 @@ public class User {
     public String getEmail() { return email; }
     public void setEmail(String email) { this.email = email; }
 
-    public LocalDate getFined() { return fined; }
-    public void setFined(LocalDate fined) { this.fined = fined; }
+    public String getFined() { return fined; }
+    public void setFined(String fined) { this.fined = fined; }
 }

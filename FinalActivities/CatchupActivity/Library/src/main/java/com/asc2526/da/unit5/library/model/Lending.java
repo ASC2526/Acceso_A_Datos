@@ -1,5 +1,6 @@
 package com.asc2526.da.unit5.library.model;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import jakarta.persistence.*;
 
@@ -15,8 +16,10 @@ public class Lending {
     private Integer id;
 
     @Column(name = "lendingdate", nullable = false)
+    @JsonFormat(pattern = "yyyy-MM-dd")
     private LocalDate lendingDate;
 
+    @JsonFormat(pattern = "yyyy-MM-dd")
     @Column(name = "returningdate")
     private LocalDate returningDate;
 

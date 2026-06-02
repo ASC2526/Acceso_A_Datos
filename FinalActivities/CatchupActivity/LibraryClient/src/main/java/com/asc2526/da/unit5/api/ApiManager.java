@@ -4,7 +4,6 @@ import com.asc2526.da.unit5.model.*;
 import com.asc2526.da.unit5.util.HttpResponse;
 import com.asc2526.da.unit5.util.RestApiConnection;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import org.json.JSONObject;
 
 import java.util.HashMap;
@@ -21,7 +20,6 @@ public class ApiManager {
                 "/"
         );
         this.mapper = new ObjectMapper();
-        this.mapper.registerModule(new JavaTimeModule());
     }
 
     public boolean checkBookExists(String isbn) {
